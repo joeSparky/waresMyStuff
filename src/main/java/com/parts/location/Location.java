@@ -1,7 +1,6 @@
 package com.parts.location;
 
 import java.lang.invoke.MethodHandles;
-import java.sql.Connection;
 import java.sql.ResultSet;
 //import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -9,15 +8,11 @@ import java.util.Date;
 
 import com.db.DoubleString;
 import com.db.DoubleStrings;
-import com.db.MyStatement;
 import com.db.SessionVars;
 import com.db.Strings;
-import com.forms.EndOfInputException;
 import com.forms.FormsArray;
-import com.forms.FormsMatrixDynamic;
 import com.parts.inOut.Part;
 import com.parts.security.PartLink;
-import com.security.ExceptionCoding;
 import com.security.MyLinkObject;
 import com.security.MyObject;
 import com.security.MyObjects;

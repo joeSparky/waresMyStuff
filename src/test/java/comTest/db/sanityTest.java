@@ -82,13 +82,13 @@ public class sanityTest {
 		ResultSet rs = null;
 		ResultSet innerRs = null;
 		Location location = null;
-		Part part = null;
+//		Part part = null;
 		MyLinkObject mlo = null;
 		try {
 			sVars = new SessionVars(true);
 			sVars.connection.createBasicDataSource("cdm2");
 			location = new Location(sVars);
-			part = new Part(sVars);
+//			part = new Part(sVars);
 			mlo = new MyLinkObject(location, location, sVars);
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
@@ -112,9 +112,6 @@ public class sanityTest {
 				boolean linkFound = false;
 				while (innerRs.next()) {
 					int parentId = innerRs.getInt("parentId");
-					int childId = innerRs.getInt("childId");
-//					System.out.println("parentId=" + parentId + " childId=" + childId);
-
 					location.find(parentId);
 //					System.out.println("parent location " + location.getInstanceName());
 					linkFound = true;

@@ -18,7 +18,6 @@ import com.forms.MainPartsForm;
 //import com.forms.MainPartsForm;
 import com.forms.SearchTarget;
 import com.parts.inOut.Part;
-import com.security.MyLinkObject;
 import com.security.MyObject;
 import com.security.User;
 
@@ -135,7 +134,7 @@ public class MainPartsFormTest {
 			// set the default user id in sVars
 			sVars.userNumber = new User(sVars).getDefaultUser().id;
 
-			MainPartsForm mpf = new MainPartsForm(sVars);
+//			MainPartsForm mpf = new MainPartsForm(sVars);
 			for (sVars.fmd.row = 0; sVars.fmd.row < sVars.fmd.getNumberOfRows(); sVars.fmd.row++) {
 				// ignore the company in the first column
 				for (sVars.fmd.column = 1; sVars.fmd.column < sVars.fmd.get(sVars.fmd.row).size(); sVars.fmd.column++) {

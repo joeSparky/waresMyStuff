@@ -4,7 +4,6 @@ import java.lang.invoke.MethodHandles;
 import java.sql.ResultSet;
 
 import com.db.SessionVars;
-import com.parts.inOut.Part;
 import com.security.MyObject;
 import com.security.MyObjects;
 import com.security.Table;

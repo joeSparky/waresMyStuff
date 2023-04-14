@@ -15,7 +15,6 @@ import partsTest.Utilities.Utilities;
 import com.security.MyObjectsArray;
 
 import comTest.security.Level1;
-import comTest.security.Level2;
 
 public class SearchTargetsTest {
 	SessionVars sVars = null;

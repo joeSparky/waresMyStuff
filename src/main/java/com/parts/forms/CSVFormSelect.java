@@ -4,7 +4,6 @@ import com.db.SessionVars;
 import com.db.XML;
 import com.forms.FormsArray;
 import com.forms.FormsMatrixDynamic;
-import com.forms.SearchTargets;
 import com.forms.SelectForm;
 import com.forms.Utils;
 import com.parts.inOut.Part;
@@ -57,7 +56,7 @@ SessionVars sVars = null;
 	public FormsArray extractParams(SessionVars sVars) throws Exception {
 		FormsArray ret = new FormsArray();
 		if (sVars.hasParameterKey(DUMPINVENTORY)) {
-			SearchTargets sts = fmd.get(row);
+//			SearchTargets sts = fmd.get(row);
 			
 			StringWriter sw = new StringWriter(sVars);
 			sw.writeString("inventory.csv", dumpInventory());

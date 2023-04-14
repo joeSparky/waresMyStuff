@@ -4,13 +4,11 @@ import com.db.SessionVars;
 import com.forms.EndOfInputException;
 import com.forms.FormsArray;
 import com.forms.SelectForm;
-import com.forms.Utils;
 import com.parts.inOut.Part;
 import com.parts.location.Location;
 import com.parts.security.PartLink;
 import com.security.ExceptionCoding;
 import com.security.MyLinkObject;
-import com.security.MyObject;
 
 public class PartLocationLocation extends SelectForm {
 
