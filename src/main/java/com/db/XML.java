@@ -20,9 +20,7 @@ public class XML {
 	static Element doc = null;
 	public static final String XMLFILENAME = "commonParams.xml";
 	public static final String DISPATCHPARAMNAME = "dispatchForm";
-//	public static final String LOGINPARAMNAME = "loginForm";
 	public static final String CSVPATH = "dcsvPath";
-	static final String DEFAULTCOMPANY = "dCompany";
 	private static final String DEFAULTUSERNAME = "dUserName";
 	private static final String DEFAULTPASSWORD = "dPassword";
 	private static Hashtable<String, String> params = null;
@@ -143,12 +141,6 @@ public class XML {
 
 	public String getCSVPath() throws Exception {
 		return readXML(CSVPATH);
-	}
-
-	public String getDefaultCompanyName() throws Exception {
-//		Company ret = new Company(sVars);
-		return readXML(DEFAULTCOMPANY);
-
 	}
 
 	public String getDefaultUserName() throws Exception {

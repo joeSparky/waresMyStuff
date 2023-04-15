@@ -11,8 +11,8 @@ import com.errorLogging.Internals;
 public class MyConnection {
 	static final String DRIVER = "com.mysql.cj.jdbc.Driver";
 	public static final String XMLDBNAME = "dbName";
-	public static final String MXLDBACCOUNT = "dbAccount";
-	public static final String MXLDBPASSWORD = "dbPassword";
+	public static final String XMLDBUSER = "dbUser";
+	public static final String XMLDBPASSWORD = "dbPassword";
 
 	BasicDataSource basicDataSource = null;
 	SessionVars sVars = null;
@@ -40,8 +40,8 @@ public class MyConnection {
 		basicDataSource = new BasicDataSource();
 		String url = "jdbc:mysql://localhost:3306/";
 		url += dbName;
-		url += "?user=" + sVars.xml.readXML(MXLDBACCOUNT);
-		url += "&password=" + sVars.xml.readXML(MXLDBPASSWORD);
+		url += "?user=" + sVars.xml.readXML(XMLDBUSER);
+		url += "&password=" + sVars.xml.readXML(XMLDBPASSWORD);
 		url += "&serverTimezone=UTC";
 		basicDataSource.setUrl(url);
 		basicDataSource.setMaxTotal(5);

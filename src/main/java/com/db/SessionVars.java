@@ -236,10 +236,6 @@ public class SessionVars {
 		return xml.getCSVPath();
 	}
 
-	public String getDefaultCompanyName() throws Exception {
-		return xml.getDefaultCompanyName();
-	}
-
 	public String getDefaultUserName() throws Exception {
 		return xml.getDefaultUserName();
 	}
