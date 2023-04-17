@@ -880,24 +880,22 @@ public class SearchTarget {
 			MyLinkObject mlo = new MyLinkObject(parent, child, sVars);
 			String linkFileName = mlo.getMyFileName();
 			String parentFileName = parent.getMyFileName();
+			String childFileName = child.getMyFileName();
 			String query = "";
 			query += "SELECT ";
 			query += parentFileName + "." + "id, ";
-			query += "concat(" + parentFileName + ".name, \" - \", " + linkFileName + ".inventoryDate) as name ";
+			query += "concat(" + parentFileName + ".name, \" - \", " + linkFileName
+					+ ".inventoryDate, \" (\", partqxchildqxlocation.quantity,\") in \", location.name ) as name ";
 			query += "from ";
-			query += linkFileName + " inner join " + parentFileName + " on " + parentFileName + ".id="
-					+ mlo.getMyFileName() + ".parentId ";
+			query += linkFileName + ", " + parentFileName + ", " + childFileName;
+			query += " where " + parentFileName + ".id=" + mlo.getMyFileName() + ".parentId ";
 			if (child.isLoaded())
-				query += " and " + mlo.getMyFileName() + ".childId=" + child.id;
-			// query += " order by `" + MyObject.INVENTORYFIELDNAME + "`, `name` ";
-			// query += " OFFSET " + offset;
-			// query += insertOrderByAndLimit(obj, IdAndStrings.DISPLAYSIZE, offset,
-			// SEARCHTYPES.INVENTORYLINKS);
-			// String soFar = "";
-			// if (!obj.searchString.isBlank())
-			// soFar += " ORDER BY score DESC, name";
-			// else
-			query += " ORDER BY " + MyObject.INVENTORYFIELDNAME + ", name";
+				query += " and " + mlo.getMyFileName() + ".childId=" + child.id + " and " + childFileName + ".id="
+						+ child.id;
+			else
+				query += " and " + mlo.getMyFileName() + ".childId=" + childFileName + ".id";
+			query += " ORDER BY ";
+			query += linkFileName + ".inventoryDate, " + parentFileName + ".name";
 			query += " LIMIT " + IdAndStrings.DISPLAYSIZE;
 			query += " OFFSET " + offset;
 			// return soFar;

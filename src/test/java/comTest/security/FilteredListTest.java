@@ -13,6 +13,9 @@ import com.forms.FormsMatrixDynamic;
 import com.forms.SearchTarget;
 import com.forms.SearchTarget.SEARCHTYPES;
 import com.forms.SearchTargets;
+import com.parts.inOut.Part;
+import com.parts.location.Location;
+import com.parts.security.PartLink;
 import com.security.MyObject;
 import com.security.MyObjectsArray;
 
@@ -42,8 +45,6 @@ public class FilteredListTest {
 		Level2 levelTwo = null;
 		Level3 levelThree = null;
 		int levelThreeId = -1;
-
-		MyObjectsArray objArray = null;
 		try {
 			levelOne = new Level1(sVars);
 			levelOne.add();
@@ -52,32 +53,18 @@ public class FilteredListTest {
 			levelThree = new Level3(sVars);
 			levelThree.add();
 			levelThreeId = levelThree.id;
-
-			objArray = new MyObjectsArray();
-			objArray.add(levelOne);
-			objArray.add(levelTwo);
-			objArray.add(levelThree);
-
 			// create all combinations of links between the layers
 			levelOne.addChild(levelTwo);
 			levelTwo.addChild(levelThree);
-
-			// clear the bottom portion of the stack
-			// levelTwo.clear();
 			levelThree.clear();
 			// exercise the search string
 			levelThree.searchString = "dkkasd fjasd eve";
-
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
 		FormsMatrixDynamic fmd = null;
-		// set the focus on the middle tab of the only row
-
 		SearchTargets objs = new SearchTargets(sVars);
-
 		objs.initResults();
-//		String ignore = null;
 		try {
 			fmd = new FormsMatrixDynamic(sVars);
 			fmd.row = 0;
@@ -103,6 +90,36 @@ public class FilteredListTest {
 				System.out.println(s);
 			}
 			fail(e.getLocalizedMessage());
+		}
+	}
+	
+	@Test
+	public void InventoryQueryTest() {
+		SearchTarget partSearchTarget = null;
+		SearchTarget locationSearchTarget = null;
+		Part part = null;
+		Location location = null;
+		PartLink partLink = null;
+		FormsMatrixDynamic fmd = null;
+		SearchTargets objs = new SearchTargets(sVars);
+		objs.initResults();
+		try {
+			part = new Part(sVars);
+			location = new Location(sVars);
+			partSearchTarget = new SearchTarget(part, sVars);
+			locationSearchTarget = new SearchTarget(location, sVars);
+			fmd = new FormsMatrixDynamic(sVars);
+			fmd.row = 0;
+			fmd.column = 0;
+			objs.add(part, SearchTarget.EDITSELECTTYPE.EDITANDSELECT);
+			objs.add(location, SearchTarget.EDITSELECTTYPE.EDITANDSELECT);
+			fmd.add(objs);
+			String str = objs.get(0).setInventoryLinkQuery(0);
+			System.out.println(str);
+//			partLink = new PartLink(part, location, sVars);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 

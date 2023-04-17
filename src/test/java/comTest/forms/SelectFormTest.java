@@ -99,7 +99,7 @@ public class SelectFormTest {
 //			idAndStrings.direction = IdAndStrings.DIRECTION.FORWARD;
 //			idAndStrings.firstDisplayedRecord = -1;
 			
-			idAndStrings.doQuery();
+			idAndStrings.doQuery(true);
 		} catch (Exception e) {
 			for (StackTraceElement ste : e.getStackTrace()) {
 				System.out.println(ste);

@@ -117,46 +117,7 @@ public class MainPartsFormTest {
 		}
 	}
 
-	//@Test
-	/**
-	 * verify all IdAndStrings.displayState are initialized
-	 */
-	public void testMainPartsFormStates() {
-//		MainPartsForm mpf = null;
-//		String currentDbName = null;
-		try {
-//			currentDbName = sVars.xml.getDefaultDbName();
-//				Utilities.getDbName();
-			sVars.connection.createBasicDataSource("cdm2");
-
-//			FormsMatrixDynamic fmd = null;
-
-			// set the default user id in sVars
-			sVars.userNumber = new User(sVars).getDefaultUser().id;
-
-//			MainPartsForm mpf = new MainPartsForm(sVars);
-			for (sVars.fmd.row = 0; sVars.fmd.row < sVars.fmd.getNumberOfRows(); sVars.fmd.row++) {
-				// ignore the company in the first column
-				for (sVars.fmd.column = 1; sVars.fmd.column < sVars.fmd.get(sVars.fmd.row).size(); sVars.fmd.column++) {
-					for (SearchTarget.SEARCHTYPES type : SearchTarget.SEARCHTYPES.values()) {
-						if (!sVars.fmd.get(sVars.fmd.row).get(sVars.fmd.column).getIdAndStrings(type).giveMeAListButton)
-							fail("row:" + sVars.fmd.row + " column:" + sVars.fmd.column + " type:" + type.toString()
-									+ " giveMeAListButton is false");
-					}
-				}
-			}
-		} catch (Exception e) {
-			for (StackTraceElement ste : e.getStackTrace())
-				System.out.println(ste);
-			fail(e.getLocalizedMessage());
-		}
-		try {
-			sVars.connection.createBasicDataSource(MyConnection.XMLDBNAME);
-		} catch (Exception e) {
-			fail(e.getLocalizedMessage());
-		}
-
-	}
+	
 
 //	@Test
 	/**
@@ -192,7 +153,7 @@ public class MainPartsFormTest {
 								fail("extractParams failed");
 						}
 						IdAndStrings ids = sVars.fmd.get(sVars.fmd.row).get(sVars.fmd.column).getIdAndStrings(type)
-								.doQuery();
+								.doQuery(true);
 						if (ids.isEmpty()) {
 							System.out.println(
 									"empty ids for " + sVars.fmd.getObject().getLogicalName() + " type:" + type);
@@ -222,7 +183,7 @@ public class MainPartsFormTest {
 								if (!endOfInput)
 									fail("extractParams failed");
 							}
-							ids = sVars.fmd.get(sVars.fmd.row).get(sVars.fmd.column).getIdAndStrings(type).doQuery();
+							ids = sVars.fmd.get(sVars.fmd.row).get(sVars.fmd.column).getIdAndStrings(type).doQuery(true);
 						}
 						if (!ids.isEmpty()) {
 							System.out.println(ids.size() + " ids for " + sVars.fmd.getObject().getLogicalName()
@@ -255,7 +216,7 @@ public class MainPartsFormTest {
 								fail("extractParams failed");
 						}
 						do {
-							ids = sVars.fmd.get(sVars.fmd.row).get(sVars.fmd.column).getIdAndStrings(type).doQuery();
+							ids = sVars.fmd.get(sVars.fmd.row).get(sVars.fmd.column).getIdAndStrings(type).doQuery(true);
 							System.out.println("previous " + ids.size() + " ids for "
 									+ sVars.fmd.getObject().getLogicalName() + " type:" + type);
 //							System.out.println(" firstDislayedRecord:"
@@ -362,7 +323,7 @@ public class MainPartsFormTest {
 								fail("extractParams failed");
 						}
 						IdAndStrings ids = sVars.fmd.get(sVars.fmd.row).get(sVars.fmd.column).getIdAndStrings(type)
-								.doQuery();
+								.doQuery(true);
 						if (ids.isEmpty()) {
 							System.out.println(
 									"empty ids for " + sVars.fmd.getObject().getLogicalName() + " type:" + type);
@@ -392,7 +353,7 @@ public class MainPartsFormTest {
 								if (!endOfInput)
 									fail("extractParams failed");
 							}
-							ids = sVars.fmd.get(sVars.fmd.row).get(sVars.fmd.column).getIdAndStrings(type).doQuery();
+							ids = sVars.fmd.get(sVars.fmd.row).get(sVars.fmd.column).getIdAndStrings(type).doQuery(true);
 						}
 						if (!ids.isEmpty()) {
 							System.out.println(ids.size() + " ids for " + sVars.fmd.getObject().getLogicalName()
@@ -425,7 +386,7 @@ public class MainPartsFormTest {
 								fail("extractParams failed");
 						}
 						do {
-							ids = sVars.fmd.get(sVars.fmd.row).get(sVars.fmd.column).getIdAndStrings(type).doQuery();
+							ids = sVars.fmd.get(sVars.fmd.row).get(sVars.fmd.column).getIdAndStrings(type).doQuery(true);
 							System.out.println("previous " + ids.size() + " ids for "
 									+ sVars.fmd.getObject().getLogicalName() + " type:" + type);
 //							System.out.println(" firstDislayedRecord:"

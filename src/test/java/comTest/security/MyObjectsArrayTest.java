@@ -65,7 +65,7 @@ public class MyObjectsArrayTest {
 		fmd.column = 0;
 		IdAndStrings idAndStrings = null;
 		try {
-			idAndStrings = new IdAndStrings(fmd, SearchTarget.SEARCHTYPES.ANCESTORS, sVars).doQuery();
+			idAndStrings = new IdAndStrings(fmd, SearchTarget.SEARCHTYPES.ANCESTORS, sVars).doQuery(true);
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
@@ -117,7 +117,7 @@ public class MyObjectsArrayTest {
 //		SearchTarget second = objArr.getFilteredList(1);
 		IdAndStrings idAndStrings = null;
 		try {
-			idAndStrings = new IdAndStrings(fmd, SearchTarget.SEARCHTYPES.ANCESTORS, sVars).doQuery();
+			idAndStrings = new IdAndStrings(fmd, SearchTarget.SEARCHTYPES.ANCESTORS, sVars).doQuery(true);
 		} catch (Exception e) {
 			for (StackTraceElement sts : e.getStackTrace())
 				System.out.println(sts);
@@ -133,7 +133,7 @@ public class MyObjectsArrayTest {
 		// go to top level
 		fmd.column = 0;
 		try {
-			idAndStrings = new IdAndStrings(fmd, SearchTarget.SEARCHTYPES.ANCESTORS, sVars).doQuery();
+			idAndStrings = new IdAndStrings(fmd, SearchTarget.SEARCHTYPES.ANCESTORS, sVars).doQuery(true);
 		} catch (Exception e) {
 			for (StackTraceElement sts : e.getStackTrace())
 				System.out.println(sts);
@@ -177,12 +177,12 @@ public class MyObjectsArrayTest {
 		fmd.column = 1;
 		IdAndStrings idAndStrings = null;
 		try {
-//			idAndStrings = new IdAndStrings(objs, 1, SearchTarget.SEARCHTYPES.DESCENDANTS).doQuery();
+//			idAndStrings = new IdAndStrings(objs, 1, SearchTarget.SEARCHTYPES.DESCENDANTS).doQuery(true);
 			idAndStrings = new IdAndStrings(fmd, SearchTarget.SEARCHTYPES.DESCENDANTS, sVars);
 //			idAndStrings.displayState = IdAndStrings.DISPLAYSTATE.ATBEGINNINGWITHOUTASEARCH;
 //			idAndStrings.direction = IdAndStrings.DIRECTION.FORWARD;
 //			idAndStrings.firstDisplayedRecord = -1;
-			idAndStrings.doQuery();
+			idAndStrings.doQuery(true);
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
@@ -192,12 +192,12 @@ public class MyObjectsArrayTest {
 			fail("second targets not empty");
 //		SearchTarget third = objs.getFilteredList(1);
 		try {
-//			idAndStrings = new IdAndStrings(objs, 1, SearchTarget.SEARCHTYPES.DESCENDANTS).doQuery();
+//			idAndStrings = new IdAndStrings(objs, 1, SearchTarget.SEARCHTYPES.DESCENDANTS).doQuery(true);
 			idAndStrings = new IdAndStrings(fmd, SearchTarget.SEARCHTYPES.DESCENDANTS, sVars);
 //			idAndStrings.displayState = IdAndStrings.DISPLAYSTATE.ATBEGINNINGWITHOUTASEARCH;
 //			idAndStrings.direction = IdAndStrings.DIRECTION.FORWARD;
 //			idAndStrings.firstDisplayedRecord = -1;
-			idAndStrings.doQuery();
+			idAndStrings.doQuery(true);
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
@@ -273,12 +273,12 @@ public class MyObjectsArrayTest {
 //		SearchTarget second = objs.getFilteredList(1);
 		IdAndStrings idAndStrings = null;
 		try {
-//			idAndStrings = new IdAndStrings(objs, 1, SearchTarget.SEARCHTYPES.DESCENDANTS).doQuery();
+//			idAndStrings = new IdAndStrings(objs, 1, SearchTarget.SEARCHTYPES.DESCENDANTS).doQuery(true);
 			idAndStrings = new IdAndStrings(fmd, SearchTarget.SEARCHTYPES.DESCENDANTS, sVars);
 //			idAndStrings.displayState = IdAndStrings.DISPLAYSTATE.ATBEGINNINGWITHOUTASEARCH;
 //			idAndStrings.direction = IdAndStrings.DIRECTION.FORWARD;
 //			idAndStrings.firstDisplayedRecord = -1;
-			idAndStrings.doQuery();
+			idAndStrings.doQuery(true);
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
@@ -326,7 +326,7 @@ public class MyObjectsArrayTest {
 
 			// ask for the descendants of levelOne, the highest selected object
 			idAndStrings = new IdAndStrings(fmd, SearchTarget.SEARCHTYPES.DESCENDANTS, sVars);
-			idAndStrings.doQuery();
+			idAndStrings.doQuery(true);
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}

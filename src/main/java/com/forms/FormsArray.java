@@ -307,6 +307,16 @@ public class FormsArray {
 			body += label;
 		body += "</option>";
 	}
+	
+	/**
+	 * if the user does not want to make a selection from a list
+	 * @param value
+	 * @param label
+	 */
+	public void addNoSelectionOption() {
+		body += "<option disabled selected value> -- select an option --";
+		body += "</option>";
+	}
 
 	public void addMultiSelectionOption(String value, String label, boolean checked) {
 		body += "<option ";

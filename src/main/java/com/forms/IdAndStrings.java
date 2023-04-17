@@ -12,6 +12,7 @@ import java.util.Set;
 import com.db.MyStatement;
 import com.db.SessionVars;
 import com.forms.SearchTarget.SEARCHTYPES;
+import com.parts.security.PartLink;
 import com.security.MyObject;
 
 public class IdAndStrings extends ArrayList<IdAndString> {
@@ -20,21 +21,7 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 	 * 
 	 */
 	private static final long serialVersionUID = 8594003232659591066L;
-// public for testing
-	/**
-	 * force the user to indicate that he wants to select an object from a list
-	 * before displaying any portion of a list. //
-	 */
-//	public String REQUESTALIST = Utils.getNextString();
-	/**
-	 * comes back as a terminator when a selection was made
-	 */
-//	String SELECTFROMLIST = Utils.getNextString();
-//	public String NEXT = Utils.getNextString();
-//	public String PREVIOUS = Utils.getNextString();
-	/**
-	 * cancel selecting from a list
-	 */
+
 	public SearchOffset so = null;
 
 	public enum OPERATORINPUT {
@@ -43,42 +30,14 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 
 	SessionVars sVars = null;
 
-	/**
-	 * when true, ask the user if he wants a list.
-	 */
-	public boolean giveMeAListButton = true;
-
-//	public enum DISPLAYSTATE {
-//		/**
-//		 * we haven't heard from the user yet. waiting for an indication that the user
-//		 * wants a list.
-//		 */
-//		SHOWGIVEMEALISTBUTTON,
-//
-//		/**
-//		 * after the first search, no records were found. Stop asking user for a
-//		 * selection using this SearchType
-//		 */
-//		SHOWCANCELONLYBUTTON,
-//		/**
-//		 * show next button
-//		 */
-//		SHOWNEXTBUTTON,
-//		/**
-//		 * show previous button
-//		 */
-//		SHOWPREVIOUSBUTTON,
-//		/**
-//		 * show next and previous button
-//		 */
-//		SHOWNEXTANDPREVIOUSBUTTON
-//	};
-
 	public enum DIRECTION {
 		UNKNOWN, FORWARD, REVERSE
 	};
 
-	boolean waitingForOperatorInput = true;
+	/**
+	 * the user is moving the search window. update the search offset when true.
+	 */
+	boolean moveSearch = false;
 
 	// public for testing
 //	public DISPLAYSTATE displayState = DISPLAYSTATE.SHOWGIVEMEALISTBUTTON;
@@ -108,6 +67,7 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 		public String NEXT = IdAndStrings.class.getCanonicalName() + searchType.toString() + "c";
 		public String PREVIOUS = IdAndStrings.class.getCanonicalName() + searchType.toString() + "d";
 		public String REQUESTALIST = IdAndStrings.class.getCanonicalName() + searchType.toString() + "e";
+		public String INVENTORYFROMLIST = IdAndStrings.class.getCanonicalName() + searchType.toString() + "f";
 
 		public MyVars(SessionVars sVars) throws Exception {
 			super(sVars, IdAndStrings.class.getCanonicalName() + "-" + searchType.toString());
@@ -119,8 +79,7 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 
 	@Override
 	public void clear() {
-		giveMeAListButton = true;
-		waitingForOperatorInput = true;
+		moveSearch = false;
 		direction = DIRECTION.FORWARD;
 		if (so == null)
 			so = new SearchOffset();
@@ -145,9 +104,9 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 		return false;
 	}
 
-	public IdAndStrings doQuery() throws Exception {
+	public IdAndStrings doQuery(boolean moveAfterSearch) throws Exception {
 		super.clear();
-		String myQuery = fm.get(fm.row).get(fm.column).getQuery(searchType, so.getNewOffset(direction));
+		String myQuery = fm.get(fm.row).get(fm.column).getQuery(searchType, so.getOffset(direction, moveAfterSearch));
 		if (myQuery.isEmpty())
 			return this;
 		Connection conn = null;
@@ -249,11 +208,11 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 			processOperatorInput(OPERATORINPUT.CANCELLIST);
 			throw new EndOfInputRedoQueries(ret);
 		}
-		if (sVars.hasParameterKey(myVars.NEXT)) {
+		if (sVars.hasParameterKey(myVars.NEXT + searchType)) {
 			processOperatorInput(OPERATORINPUT.NEXT);
 			throw new EndOfInputRedoQueries(ret);
 		}
-		if (sVars.hasParameterKey(myVars.PREVIOUS)) {
+		if (sVars.hasParameterKey(myVars.PREVIOUS + searchType)) {
 			processOperatorInput(OPERATORINPUT.PREVIOUS);
 			throw new EndOfInputRedoQueries(ret);
 		}
@@ -275,6 +234,29 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 			throw new EndOfInputRedoQueries(ret);
 		}
 
+		if (sVars.getParameterKeys().contains(myVars.INVENTORYFROMLIST)) {
+			int id = -1;
+			try {
+				id = Integer.parseInt(sVars.getParameterValue(myVars.INVENTORYFROMLIST));
+			} catch (Exception e) {
+				ret.errorToUser("Please make a selection before clicking the Select button");
+				throw new EndOfInputException(ret);
+			}
+			MyObject obj = fm.getObject();
+			obj.find(id);
+			MyObject toTheRight = fm.getObjectBelowMeInRow();
+			if (obj.childExists(toTheRight)) {
+				PartLink pl = new PartLink(obj, toTheRight, sVars);
+				pl.find();
+				pl.setInventoried(true);
+				pl.update();
+			} else {
+				throw new Exception("PartLink does not exist.");
+			}
+			obj.clear();
+			throw new EndOfInputRedoQueries(ret);
+		}
+
 		return ret;
 	}
 
@@ -286,14 +268,14 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 		// if the object does not have an inventory field
 		if (searchType == SearchTarget.SEARCHTYPES.INVENTORY && !fm.getObject().hasInventoryField())
 			return ret;
-		if (giveMeAListButton) {
-			if (fm.get(fm.row).get(fm.column).shouldGetAButton(fm, searchType))
-
-				ret.submitButton("Select from " + SearchTarget.getIdAndStringLabels(searchType) + " list",
-						myVars.REQUESTALIST);
-			return ret;
-		}
-		doQuery();
+//		if (giveMeAListButton) {
+//			if (fm.get(fm.row).get(fm.column).shouldGetAButton(fm, searchType))
+//
+//				ret.submitButton("Select from " + SearchTarget.getIdAndStringLabels(searchType) + " list",
+//						myVars.REQUESTALIST);
+//			return ret;
+//		}
+		doQuery(moveSearch);
 		if (isEmpty()) {
 			if (!fm.getObject().searchString.isEmpty()) {
 				ret.rawText("Nothing found in " + SearchTarget.getIdAndStringLabels(searchType) + " list with "
@@ -308,7 +290,21 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 			ret.endBold();
 			ret.endRow();
 			ret.startRow();
-			ret.startSingleSelection(myVars.SELECTFROMLIST, Math.min(DISPLAYSIZE, this.size()), false);
+			switch (searchType) {
+			case ALL:
+			case ANCESTORS:
+			case DESCENDANTS:
+				// allow room for the "no selection" option
+				ret.startSingleSelection(myVars.SELECTFROMLIST, Math.min(DISPLAYSIZE + 1, this.size() + 1), false);
+				break;
+			case INVENTORY:
+			case INVENTORYLINKS:
+				ret.startSingleSelection(myVars.INVENTORYFROMLIST, Math.min(DISPLAYSIZE + 1, this.size() + 1), false);
+				break;
+			default:
+				break;
+			}
+			ret.addNoSelectionOption();
 			IdAndString tmp = new IdAndString();
 			Iterator<IdAndString> itr = iterator();
 			while (itr.hasNext()) {
@@ -317,36 +313,22 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 			}
 			ret.endSingleSelection();
 			ret.endTable();
-			ret.submitButton("Submit selected object from " + SearchTarget.getIdAndStringLabels(searchType),
-					myVars.SELECTFROMLIST);
+			switch (searchType) {
+			case ALL:
+			case ANCESTORS:
+			case DESCENDANTS:
+				ret.submitButton("Submit selected object from " + SearchTarget.getIdAndStringLabels(searchType),
+						myVars.SELECTFROMLIST);
+				break;
+			case INVENTORY:
+			case INVENTORYLINKS:
+				ret.submitButton("Mark as inventoried " + searchType.toString(), myVars.INVENTORYFROMLIST);
+				break;
+			}
 			if (so.showNextButton())
 				ret.addAll(nextButton(myVars));
 			if (so.showPreviousButton())
 				ret.addAll(previousButton(myVars));
-			if (!giveMeAListButton)
-				ret.addAll(cancelListButton(myVars));
-
-//			switch (displayState) {
-//			case SHOWNEXTBUTTON:
-//				ret.addAll(nextButton());
-//				ret.addAll(cancelListButton());
-//				break;
-//			case SHOWPREVIOUSBUTTON:
-//				ret.addAll(previousButton());
-//				ret.addAll(cancelListButton());
-//				break;
-//			case SHOWNEXTANDPREVIOUSBUTTON:
-//				ret.addAll(previousButton());
-//				ret.addAll(nextButton());
-//				ret.addAll(cancelListButton());
-//				break;
-//			case SHOWGIVEMEALISTBUTTON:
-//				// done earlier in getForm
-//				break;
-//			case SHOWCANCELONLYBUTTON:
-//				ret.addAll(cancelListButton());
-//				break;
-//			}
 		}
 		return ret;
 	}
@@ -354,44 +336,34 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 	FormsArray nextButton(MyVars myVars) {
 		FormsArray ret = new FormsArray();
 		ret.submitButton("Next " + DISPLAYSIZE + " objects from " + SearchTarget.getIdAndStringLabels(searchType),
-				myVars.NEXT);
+				myVars.NEXT + searchType);
 		return ret;
 	}
 
 	FormsArray previousButton(MyVars myVars) {
 		FormsArray ret = new FormsArray();
 		ret.submitButton("Previous " + DISPLAYSIZE + " objects from " + SearchTarget.getIdAndStringLabels(searchType),
-				myVars.PREVIOUS);
-		return ret;
-	}
-
-	FormsArray cancelListButton(MyVars myVars) throws Exception {
-		FormsArray ret = new FormsArray();
-		ret.submitButton("Cancel selecting objects from " + SearchTarget.getIdAndStringLabels(searchType),
-				myVars.CANCELLIST);
+				myVars.PREVIOUS + searchType);
 		return ret;
 	}
 
 	public void processOperatorInput(OPERATORINPUT input) {
-		waitingForOperatorInput = false;
 		switch (input) {
 		case CANCELLIST:
-			giveMeAListButton = true;
+			moveSearch = false;
 			break;
 		case NEXT:
 			// no NEXT button is offered to the user if the records have been exhausted
 			direction = DIRECTION.FORWARD;
+			moveSearch = true;
 			break;
 		case PREVIOUS:
 			direction = DIRECTION.REVERSE;
+			moveSearch = true;
 			break;
 		case WANTSALIST:
-			giveMeAListButton = false;
+			moveSearch = false;
 			break;
 		}
-
-//			break;
-//		}
-		waitingForOperatorInput = true;
 	}
 }

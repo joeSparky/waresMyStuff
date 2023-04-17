@@ -52,7 +52,17 @@ public class SearchOffset {
 		}
 	}
 
-	public int getNewOffset(IdAndStrings.DIRECTION direction) {
+	/**
+	 * 
+	 * @param direction
+	 * @param movement, the use is moving the search window. return a new offset if
+	 *                  movement is true.
+	 * @return
+	 */
+
+	public int getOffset(IdAndStrings.DIRECTION direction, boolean movement) {
+		if (!movement)
+			return lastOffset;
 		switch (direction) {
 		case FORWARD:
 			if (numberOfRecordsFound == IdAndStrings.DISPLAYSIZE)

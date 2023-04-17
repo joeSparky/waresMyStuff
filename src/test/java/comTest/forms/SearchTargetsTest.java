@@ -104,7 +104,7 @@ public class SearchTargetsTest {
 			idAndStrings = new IdAndStrings(formsMatrixDynamic, SearchTarget.SEARCHTYPES.DESCENDANTS, sVars);
 //			idAndStrings.displayState = IdAndStrings.DISPLAYSTATE.ATBEGINNINGWITHOUTASEARCH;
 //			idAndStrings.direction = IdAndStrings.DIRECTION.FORWARD;
-			idAndStrings.doQuery();
+			idAndStrings.doQuery(true);
 		} catch (Exception e) {
 			for (StackTraceElement ele : e.getStackTrace()) {
 				System.out.println(ele);
@@ -125,7 +125,7 @@ public class SearchTargetsTest {
 
 		// should have 5 bubbas
 		try {
-			idAndStrings.doQuery();
+			idAndStrings.doQuery(true);
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
@@ -211,7 +211,7 @@ public class SearchTargetsTest {
 //			idAndStrings.displayState = IdAndStrings.DISPLAYSTATE.ATBEGINNINGWITHOUTASEARCH;
 //			idAndStrings.direction = IdAndStrings.DIRECTION.FORWARD;
 //			idAndStrings.firstDisplayedRecord = -1;
-			idAndStrings.doQuery();
+			idAndStrings.doQuery(true);
 		} catch (Exception e) {
 			for (StackTraceElement ste : e.getStackTrace()) {
 				System.out.println(ste);
@@ -236,7 +236,7 @@ public class SearchTargetsTest {
 //			idAndStrings.displayState = IdAndStrings.DISPLAYSTATE.ATBEGINNINGWITHOUTASEARCH;
 //			idAndStrings.direction = IdAndStrings.DIRECTION.FORWARD;
 //			idAndStrings.firstDisplayedRecord = -1;
-			idAndStrings.doQuery();
+			idAndStrings.doQuery(true);
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}

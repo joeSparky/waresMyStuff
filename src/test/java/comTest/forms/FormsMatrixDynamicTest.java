@@ -100,7 +100,7 @@ public class FormsMatrixDynamicTest {
 			fail("didn't get " + EndOfInputRedoQueries.class.getCanonicalName());
 
 		try {
-			results = ids.doQuery();
+			results = ids.doQuery(true);
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
@@ -126,7 +126,7 @@ public class FormsMatrixDynamicTest {
 		if (!allGood)
 			fail("didn't get " + EndOfInputRedoQueries.class.getCanonicalName());
 		try {
-			results = ids.doQuery();
+			results = ids.doQuery(true);
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
@@ -152,7 +152,7 @@ public class FormsMatrixDynamicTest {
 		if (!allGood)
 			fail("didn't get " + EndOfInputRedoQueries.class.getCanonicalName());
 		try {
-			results = ids.doQuery();
+			results = ids.doQuery(true);
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
@@ -178,7 +178,7 @@ public class FormsMatrixDynamicTest {
 		if (!allGood)
 			fail("didn't get " + EndOfInputRedoQueries.class.getCanonicalName());
 		try {
-			results = ids.doQuery();
+			results = ids.doQuery(true);
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
