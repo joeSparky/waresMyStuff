@@ -1,6 +1,8 @@
 package com.forms;
 
 import com.db.SessionVars;
+import com.parts.inOut.Part;
+import com.parts.location.Location;
 import com.security.ExceptionCoding;
 
 /**
@@ -19,7 +21,6 @@ public class AttachToFormPair extends SmartForm {
 	private static final long serialVersionUID = -2279444124310834216L;
 	static final String buttonLinkChild = AttachToFormPair.class.getCanonicalName() + "a";
 	String buttonUnlinkChild = AttachToFormPair.class.getCanonicalName() + "b";
-
 
 	/**
 	 * work with the object at row, column and at row, column+1
@@ -48,6 +49,7 @@ public class AttachToFormPair extends SmartForm {
 				ret.addAll(markAsInventoried(sVars, leftAndRight));
 			} else
 				ret.addAll(addLink(sVars, leftAndRight));
+		
 		return ret;
 	}
 
@@ -119,9 +121,9 @@ public class AttachToFormPair extends SmartForm {
 	@Override
 	public FormsArray extractParams(SessionVars sVars) throws Exception {
 		if (forMe(sVars)) {
-			
-			return eachSide(sVars);}
-		else
+
+			return eachSide(sVars);
+		} else
 			return new FormsArray();
 	}
 

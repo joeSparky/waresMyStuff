@@ -20,9 +20,9 @@ import com.db.Strings;
  *
  */
 public class MyLinkObject implements HasTableInterface {
-	
+
 	protected SessionVars sVars = null;
-	
+
 	public MyLinkObject(MyObject parent, MyObject child, SessionVars sVars) throws Exception {
 		this.sVars = sVars;
 		clear();
@@ -86,6 +86,38 @@ public class MyLinkObject implements HasTableInterface {
 		}
 	}
 
+	/**
+	 * find a link using the link id. update parent and child if it's found
+	 * 
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	public MyLinkObject find(int id) throws Exception {
+		Connection conn = null;
+		MyStatement st = null;
+		ResultSet rs = null;
+		try {
+			conn = sVars.connection.getConnection();
+			st = new MyStatement(conn);
+			rs = st.executeQueryWithException("select * from " + getMyFileName() + " where Id='" + id + "'");
+			if (rs.next()) {
+				extractInfo(rs);
+				parent.find(parent.id);
+				child.find(child.id);
+				return this;
+			}
+			throw new Exception("id not found. " + new Exception().getStackTrace()[0]);
+		} finally {
+			if (rs != null)
+				rs.close();
+			if (st != null)
+				st.close();
+			if (conn != null)
+				conn.close();
+		}
+	}
+
 	public boolean linkExists() throws ExceptionCoding {
 		if (parent == null)
 			throw new ExceptionCoding("null parent");
@@ -103,7 +135,7 @@ public class MyLinkObject implements HasTableInterface {
 			return false;
 		}
 	}
-	
+
 	public boolean okToAddChild() {
 		try {
 			okToAddChildException();
@@ -112,14 +144,14 @@ public class MyLinkObject implements HasTableInterface {
 		}
 		return true;
 	}
-	
-	
+
 	/**
 	 * throw an exception if something is wrong or return true;
+	 * 
 	 * @return
 	 * @throws Exception
 	 */
-	public  void okToAddChildException() throws Exception {
+	public void okToAddChildException() throws Exception {
 		if (!parent.isLoaded())
 			throw new Exception("parent not loaded");
 		if (!child.isLoaded())
@@ -320,7 +352,7 @@ public class MyLinkObject implements HasTableInterface {
 	public void deleteLinksUnconditionallyParent() throws Exception {
 		if (!parent.isLoaded())
 			throw new Exception("parent must be loaded");
-		MyLinkObject mlo = new MyLinkObject(parent, child,sVars);
+		MyLinkObject mlo = new MyLinkObject(parent, child, sVars);
 		Connection co = null;
 		MyStatement st = null;
 		try {
@@ -488,8 +520,7 @@ public class MyLinkObject implements HasTableInterface {
 //		}
 	}
 
-	void getMyChildrenRecursive(MyObject thisObject, ArrayList<Integer> idsOfAncestors, MyObject me)
-			throws Exception {
+	void getMyChildrenRecursive(MyObject thisObject, ArrayList<Integer> idsOfAncestors, MyObject me) throws Exception {
 		if (thisObject.getMyFileName().equals(me.getMyFileName())) {
 			idsOfAncestors.add(thisObject.id);
 			return;
@@ -612,7 +643,8 @@ public class MyLinkObject implements HasTableInterface {
 
 	}
 
-	protected static MyLinkObject extractInfo(MyObject parent, MyObject child, ResultSet row, SessionVars sVars) throws Exception {
+	protected static MyLinkObject extractInfo(MyObject parent, MyObject child, ResultSet row, SessionVars sVars)
+			throws Exception {
 		MyLinkObject mlo = new MyLinkObject(parent, child, sVars);
 		if (row == null) {
 			throw new ExceptionCoding("null row");
@@ -638,9 +670,8 @@ public class MyLinkObject implements HasTableInterface {
 			try {
 				co = sVars.connection.getConnection();
 				st = new MyStatement(co);
-				return !(st.executeQuery(
-						"SELECT * FROM " + getFileName(child, child, sVars) + " WHERE childId='" + child.id + "' LIMIT 1;")
-						.next());
+				return !(st.executeQuery("SELECT * FROM " + getFileName(child, child, sVars) + " WHERE childId='"
+						+ child.id + "' LIMIT 1;").next());
 			} catch (Exception e) {
 				return false;
 			} finally {
@@ -711,5 +742,9 @@ public class MyLinkObject implements HasTableInterface {
 				co.close();
 		}
 		return this;
+	}
+
+	public boolean hasQuantity() {
+		return false;
 	}
 }

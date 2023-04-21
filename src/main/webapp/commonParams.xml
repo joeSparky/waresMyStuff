@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE params [
 <!ELEMENT params (
-loginForm, dispatchForm, dbName, dbAccount, dbPassword, dUserName, dPassword,dCompany,
+loginForm, dispatchForm, dbName, dbUser, dbPassword, dUserName, dPassword,dCompany,
 csvPath)>
 <!ELEMENT loginForm (#PCDATA)>
 <!ELEMENT dispatchForm (#PCDATA)>
 <!ELEMENT dbName (#PCDATA)>
-<!ELEMENT dbAccount (#PCDATA)>
+<!ELEMENT dbUser (#PCDATA)>
 <!ELEMENT dbPassword (#PCDATA)>
 <!ELEMENT dUserName (#PCDATA)>
 <!ELEMENT dPassword (#PCDATA)>
@@ -17,8 +17,8 @@ csvPath)>
 <params>
 	<loginForm>com.parts.security.Login</loginForm>
 	<dispatchForm>com.parts.security.Dispatch</dispatchForm>
-	<dbName>cdm2</dbName>
-	<dbAccount>root</dbAccount>
+	<dbName>shop</dbName>
+	<dbUser>root</dbUser>
 	<dbPassword>y2schaum</dbPassword>
 	<dUserName>ferSure</dUserName>
 	<dPassword>ferSure</dPassword>

@@ -15,10 +15,7 @@ import com.forms.SearchTarget.SEARCHTYPES;
 import com.forms.SearchTargets;
 import com.parts.inOut.Part;
 import com.parts.location.Location;
-import com.parts.security.PartLink;
 import com.security.MyObject;
-import com.security.MyObjectsArray;
-
 import comTest.utilities.Utilities;
 
 public class FilteredListTest {
@@ -27,7 +24,7 @@ public class FilteredListTest {
 	@Before
 	public void setUp() throws Exception {
 		sVars = new SessionVars(true);
-		
+
 		new Utilities().allNewTables(sVars);
 	}
 
@@ -84,7 +81,7 @@ public class FilteredListTest {
 			objs.get(0).setAncestorsQuery(0);
 			objs.get(0).setDescendantsQuery(0);
 			objs.get(0).setInventoryLinkQuery(0);
-			objs.get(0).setInventoryQuery(0);
+//			objs.get(0).setInventoryQuery(0);
 		} catch (Exception e) {
 			for (StackTraceElement s : e.getStackTrace()) {
 				System.out.println(s);
@@ -92,22 +89,18 @@ public class FilteredListTest {
 			fail(e.getLocalizedMessage());
 		}
 	}
-	
+
+	// part and location
 	@Test
 	public void InventoryQueryTest() {
-		SearchTarget partSearchTarget = null;
-		SearchTarget locationSearchTarget = null;
 		Part part = null;
 		Location location = null;
-		PartLink partLink = null;
 		FormsMatrixDynamic fmd = null;
 		SearchTargets objs = new SearchTargets(sVars);
 		objs.initResults();
 		try {
 			part = new Part(sVars);
 			location = new Location(sVars);
-			partSearchTarget = new SearchTarget(part, sVars);
-			locationSearchTarget = new SearchTarget(location, sVars);
 			fmd = new FormsMatrixDynamic(sVars);
 			fmd.row = 0;
 			fmd.column = 0;
@@ -117,6 +110,86 @@ public class FilteredListTest {
 			String str = objs.get(0).setInventoryLinkQuery(0);
 			System.out.println(str);
 //			partLink = new PartLink(part, location, sVars);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	// unselected part and selectedlocation
+	@Test
+	public void InventoryQueryTestUnselectedPartSelectedLocation() {
+		Part part = null;
+		Location location = null;
+		FormsMatrixDynamic fmd = null;
+		SearchTargets objs = new SearchTargets(sVars);
+		objs.initResults();
+		try {
+			part = new Part(sVars);
+			location = new Location(sVars);
+			location.id = 2;
+			fmd = new FormsMatrixDynamic(sVars);
+			fmd.row = 0;
+			fmd.column = 0;
+			objs.add(part, SearchTarget.EDITSELECTTYPE.EDITANDSELECT);
+			objs.add(location, SearchTarget.EDITSELECTTYPE.EDITANDSELECT);
+			fmd.add(objs);
+			String str = objs.get(0).setInventoryLinkQuery(0);
+			System.out.println(str);
+//				partLink = new PartLink(part, location, sVars);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	// selected part and unselected location
+	@Test
+	public void InventoryQueryTestSelectedPartUnselectedLocation() {
+		Part part = null;
+		Location location = null;
+		FormsMatrixDynamic fmd = null;
+		SearchTargets objs = new SearchTargets(sVars);
+		objs.initResults();
+		try {
+			part = new Part(sVars);
+			part.id = 31;
+			location = new Location(sVars);
+			fmd = new FormsMatrixDynamic(sVars);
+			fmd.row = 0;
+			fmd.column = 0;
+			objs.add(part, SearchTarget.EDITSELECTTYPE.EDITANDSELECT);
+			objs.add(location, SearchTarget.EDITSELECTTYPE.EDITANDSELECT);
+			fmd.add(objs);
+			String str = objs.get(0).setInventoryLinkQuery(0);
+			System.out.println(str);
+//						partLink = new PartLink(part, location, sVars);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	// location and location
+	@Test
+	public void InventoryQueryLocationLocationTest() {
+		Location parentLocation = null;
+		Location childLocation = null;
+		FormsMatrixDynamic fmd = null;
+		SearchTargets objs = new SearchTargets(sVars);
+		objs.initResults();
+		try {
+			parentLocation = new Location(sVars);
+			childLocation = new Location(sVars);
+			fmd = new FormsMatrixDynamic(sVars);
+			fmd.row = 0;
+			fmd.column = 0;
+			objs.add(parentLocation, SearchTarget.EDITSELECTTYPE.EDITANDSELECT);
+			objs.add(childLocation, SearchTarget.EDITSELECTTYPE.EDITANDSELECT);
+			fmd.add(objs);
+			String str = objs.get(0).setInventoryLinkQuery(0);
+			System.out.println(str);
+//				partLink = new PartLink(part, location, sVars);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

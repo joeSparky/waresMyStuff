@@ -9,6 +9,8 @@ import com.parts.forms.AttachToFormLocationLocation;
 import com.parts.forms.PartLocationLocation;
 import com.parts.inOut.Part;
 import com.parts.location.Location;
+import com.parts.security.InventoryDate;
+import com.parts.security.PartLink;
 import com.security.MyLinkObject;
 import com.security.MyObject;
 
@@ -22,18 +24,18 @@ import com.security.MyObject;
  */
 public class SearchTarget {
 
-	/**
-	 * A textual context (path) to the ancestors of myObject. For example, if
-	 * myObject was a parts bin, the ancestors context would be
-	 * shop->basement->laundry room->north wall->parts bin. Associated with
-	 * ancestorTargets
-	 */
-	public String ancestorSource = null;
-	/**
-	 * A textual context (path) to the descendants of myObject. Associated with
-	 * descendantTargets.
-	 */
-	public String descendantSource = null;
+//	/**
+//	 * A textual context (path) to the ancestors of myObject. For example, if
+//	 * myObject was a parts bin, the ancestors context would be
+//	 * shop->basement->laundry room->north wall->parts bin. Associated with
+//	 * ancestorTargets
+//	 */
+//	public String ancestorSource = null;
+//	/**
+//	 * A textual context (path) to the descendants of myObject. Associated with
+//	 * descendantTargets.
+//	 */
+//	public String descendantSource = null;
 	public MyObject obj = null;
 	public String NAMEBOX;
 	public String SEARCHBOX;
@@ -41,17 +43,19 @@ public class SearchTarget {
 	public boolean objectSelectedLastTime = false;
 	public int row = -1;
 	public int column = -1;
-	/**
-	 * the select to use for this object
-	 */
-	public SmartForm selector = null;
+//	/**
+//	 * the select to use for this object
+//	 */
+//	public SmartForm selector = null;
 
 	public enum EDITSELECTTYPE {
 		NOTINITIALIZED, SELECT, EDITANDSELECT, NEITHER
 	};
 
 	public enum SEARCHTYPES {
-		DESCENDANTS, INVENTORY, INVENTORYLINKS, ANCESTORS, ALL
+		ALL, DESCENDANTS,
+//		INVENTORY, 
+		INVENTORYLINKS, ANCESTORS
 	}
 
 	public static String getIdAndStringLabels(SEARCHTYPES types) {
@@ -62,8 +66,8 @@ public class SearchTarget {
 			return "Ancestors";
 		case DESCENDANTS:
 			return "Descendants";
-		case INVENTORY:
-			return "Inventory";
+//		case INVENTORY:
+//			return "Inventory";
 		case INVENTORYLINKS:
 			return "Inventory Links";
 		}
@@ -71,12 +75,12 @@ public class SearchTarget {
 	}
 
 	public boolean shouldGetAButton(FormsMatrixDynamic fmd, SEARCHTYPES type) {
-		MyObject obj = fmd.getObject();
+//		MyObject obj = fmd.getObject();
 		switch (type) {
 		case ALL:
 			return true;
-		case INVENTORY:
-			return obj.hasInventoryField();
+//		case INVENTORY:
+//			return obj.hasInventoryField();
 		case ANCESTORS:
 			// needs searchTarget below it and the object below must be loaded
 			return fmd.column < fmd.getRow().size() - 1 && fmd.getRow().get(fmd.column + 1).obj.isLoaded();
@@ -114,7 +118,8 @@ public class SearchTarget {
 	}
 
 	public void clear() {
-		ancestorSource = descendantSource = "";
+//		ancestorSource = 
+//				descendantSource = "";
 		for (SEARCHTYPES s : SEARCHTYPES.values()) {
 			IdAndStrings tmp = new IdAndStrings(fmd, s, sVars);
 			idAndStrings.put(s, tmp);
@@ -427,25 +432,25 @@ public class SearchTarget {
 		return true;
 	}
 
-	void setDescendants() throws Exception {
-		// if the first entry (company) is not loaded, something is wrong
-//		if (!objs.get(0).obj.isLoaded())
-//			throw new Exception("first entry not loaded");
-
-		String descendantSource = "";
-		// for each column in the row
-		for (int myIndex = 0; myIndex < fmd.get(fmd.row).size(); myIndex++) {
-
-			fmd.get(fmd.row).get(myIndex).descendantSource = descendantSource;
-			MyObject obj = fmd.get(fmd.row).get(myIndex).obj;
-			if (obj.isLoaded()) {
-				// update the descendantSource with the latest layer information
-				descendantSource = obj.getAName() + ":" + obj.getInstanceName();
-				// don't create descendants for a loaded layer
-				continue;
-			}
-		}
-	}
+//	void setDescendants() throws Exception {
+//		// if the first entry (company) is not loaded, something is wrong
+////		if (!objs.get(0).obj.isLoaded())
+////			throw new Exception("first entry not loaded");
+//
+//		String descendantSource = "";
+//		// for each column in the row
+//		for (int myIndex = 0; myIndex < fmd.get(fmd.row).size(); myIndex++) {
+//
+//			fmd.get(fmd.row).get(myIndex).descendantSource = descendantSource;
+//			MyObject obj = fmd.get(fmd.row).get(myIndex).obj;
+//			if (obj.isLoaded()) {
+//				// update the descendantSource with the latest layer information
+//				descendantSource = obj.getAName() + ":" + obj.getInstanceName();
+//				// don't create descendants for a loaded layer
+//				continue;
+//			}
+//		}
+//	}
 
 	public String lastJoin(int layer, String linkFileName, String thisLevelFileName) {
 		String ret = "";
@@ -624,24 +629,24 @@ public class SearchTarget {
 		return soFar;
 	}
 
-	/**
-	 * set the ancestorTargets for unloaded objects that have a loaded object below
-	 * them
-	 */
-	void setAncestors() throws Exception {
-//		MyObject obj = fmd.get(fmd.row).get(fmd.column).obj;
-		String ancestorSource = "";
-		// from the bottom up
-		for (int index = fmd.getRowSize() - 1; index > 0; index--) {
-			fmd.get(fmd.row).get(fmd.column).ancestorSource = ancestorSource;
-			// if the current layer is loaded
-			if (obj.isLoaded()) {
-				ancestorSource = obj.getAName() + ":" + obj.getInstanceName();
-				// don't bother with ancestors for a loaded object
-				continue;
-			}
-		}
-	}
+//	/**
+//	 * set the ancestorTargets for unloaded objects that have a loaded object below
+//	 * them
+//	 */
+//	void setAncestors() throws Exception {
+////		MyObject obj = fmd.get(fmd.row).get(fmd.column).obj;
+//		String ancestorSource = "";
+//		// from the bottom up
+//		for (int index = fmd.getRowSize() - 1; index > 0; index--) {
+//			fmd.get(fmd.row).get(fmd.column).ancestorSource = ancestorSource;
+//			// if the current layer is loaded
+//			if (obj.isLoaded()) {
+//				ancestorSource = obj.getAName() + ":" + obj.getInstanceName();
+//				// don't bother with ancestors for a loaded object
+//				continue;
+//			}
+//		}
+//	}
 
 	/**
 	 * get all objects at the "index" level
@@ -823,42 +828,148 @@ public class SearchTarget {
 //	}
 
 	// ret the least recently inventoried objects that have hasInventoryField set
-	public String setInventoryQuery(int offset) throws Exception {
+//	public String setInventoryQuery(int offset) throws Exception {
+//		String query = "";
+//		if (!obj.hasInventoryField())
+//			return query;
+//		query += "SELECT ";
+//		query += obj.getMyFileName() + "." + "id, ";
+//		query += obj.getMyFileName() + "." + InventoryDate.INVENTORYDATE + ", ";
+//		query += "concat(name, ' - ', " + InventoryDate.INVENTORYDATE + ") as name ";
+////		query += insertSearchMatch(obj);
+//		query += "from ";
+//		query += obj.getMyFileName();
+//		query += " order by `" + InventoryDate.INVENTORYDATE + "`, `name` ";
+//		query += " LIMIT " + IdAndStrings.DISPLAYSIZE;
+//		query += " OFFSET " + offset;
+////		query += insertOrderByAndLimit(obj, IdAndStrings.DISPLAYSIZE, offset, SEARCHTYPES.INVENTORY);
+//		return query;
+//	}
+
+	// the parent is selected, the child is not. show the children of the selected
+	// child
+
+	String listOfChildren(int offset) throws Exception {
+		MyObject parent = fmd.getObject();
+		MyObject child = fmd.getToMyRight().obj;
+		MyLinkObject mlo = new MyLinkObject(parent, child, sVars);
+//		String linkFileName = mlo.getMyFileName();
+//		String parentFileName = parent.getMyFileName();
+//		String childFileName = child.getMyFileName();
+//		MyLinkObject mlo = new MyLinkObject(parent, child, sVars);
+		String linkFileName = mlo.getMyFileName();
+		String parentFileName = parent.getMyFileName();
+		String childFileName = child.getMyFileName();
+		boolean parentIsPart = parent instanceof Part;
 		String query = "";
-		if (!obj.hasInventoryField())
-			return query;
 		query += "SELECT ";
-		query += obj.getMyFileName() + "." + "id, ";
-		query += obj.getMyFileName() + "." + MyObject.INVENTORYFIELDNAME + ", ";
-		query += "concat(name, ' - ', " + MyObject.INVENTORYFIELDNAME + ") as name ";
-//		query += insertSearchMatch(obj);
+		query += linkFileName + "." + "id, ";
+
+		// build the "as name" field which will be the concatenation of the parent name,
+		// inventory date, quantity (if the parent is a part), and the child name
+		if (parentIsPart)
+			query += "concat(\"part:\"";
+		else
+			query += "concat(\"parent:\"";
+		query += ", " + parentFileName + ".name";
+		// inventory date
+		query += ", \" date:\"";
+		query += ", " + linkFileName + "." + InventoryDate.INVENTORYDATE;
+
+		if (parentIsPart) {
+			query += ", \" quantity:\", " + linkFileName + "." + PartLink.QUANTITY;
+			query += ", \" at:\", child.name";
+		} else
+			query += ", \" child:\", child.name";
+		// end of concatenation
+		query += ")";
+		query += " as name ";
 		query += "from ";
-		query += obj.getMyFileName();
-		query += " order by `" + MyObject.INVENTORYFIELDNAME + "`, `name` ";
+		query += linkFileName + " inner join " + parentFileName + " on " + linkFileName + ".parentId=" + parent.id;
+		query += " AND " + parentFileName + ".id=" + parent.id;
+		query += " inner join ";
+		query += childFileName + " as child on child.id =";
+		query += linkFileName + ".childId";
+		query += " ORDER BY ";
+		query += linkFileName + ".inventoryDate, " + parentFileName + ".name";
 		query += " LIMIT " + IdAndStrings.DISPLAYSIZE;
 		query += " OFFSET " + offset;
-//		query += insertOrderByAndLimit(obj, IdAndStrings.DISPLAYSIZE, offset, SEARCHTYPES.INVENTORY);
+		// return soFar;
 		return query;
 	}
 
-//	@Override
-//	public void setOldestLinkInventory(SearchTargets objs) throws Exception {
-//		for (int myIndex = 0; myIndex < objs.size(); myIndex++) {
-//			MyObject workingObject = objs.get(myIndex).obj;
-//			int belowMeIndex = myIndex + 1;
-//			// if not at the bottom of objs
-//			if (belowMeIndex < objs.size()) {
-//				MyObject belowMeObject = objs.get(belowMeIndex).obj;
-//				// and i'm not loaded
-//				if (!workingObject.isLoaded()) {
-//					// and we have an inventory link
-////					if (workingObject.hasInventoryLinkWith(belowMeObject)) {
-////						objs.get(myIndex).inventoryLinkTargets.storeQuery(setInventoryLinkQuery(workingObject, belowMeObject));
-////					}
-//				}
-//			}
-//		}
-//	}
+	String listOfChildrenNew(int offset) throws Exception {
+		MyObject parent = fmd.getObject();
+		MyObject child = fmd.getToMyRight().obj;
+		MyLinkObject mlo = new MyLinkObject(parent, child, sVars);
+		String linkFileName = mlo.getMyFileName();
+		String parentFileName = parent.getMyFileName();
+		String childFileName = child.getMyFileName();
+		String query = "";
+		query += "SELECT ";
+//		query += parentFileName + "." + "id, name ";
+		query += linkFileName + "." + "id, " + childFileName + ".name ";
+		query += "from ";
+		query += linkFileName + " inner join " + childFileName + " on " + linkFileName + ".parentId=" + parent.id;
+		query += " AND " + childFileName + ".id=" + linkFileName + ".childId";
+		query += " ORDER BY ";
+		query += linkFileName + ".inventoryDate, " + childFileName + ".name";
+		query += " LIMIT " + IdAndStrings.DISPLAYSIZE;
+		query += " OFFSET " + offset;
+		// return soFar;
+		return query;
+	}
+
+	/**
+	 * The parent is an unselected part. The child is a selected location. list all
+	 * parts at the selected location.
+	 * 
+	 * @param offset
+	 * @return
+	 * @throws Exception
+	 */
+	String listPartsAtLocation(int offset) throws Exception {
+		MyObject parent = fmd.getObject();
+		MyObject child = fmd.getToMyRight().obj;
+		if (!(parent instanceof Part))
+			throw new Exception("parent not part");
+		if (!(child instanceof Location))
+			throw new Exception("child not location");
+		PartLink mlo = new PartLink(parent, child, sVars);
+		String linkFileName = mlo.getMyFileName();
+		String parentFileName = parent.getMyFileName();
+		String childFileName = child.getMyFileName();
+		String query = "";
+		query += "SELECT ";
+		query += linkFileName + ".id";
+//		query += ", " + parentFileName + ".name as partName";
+//		query += ", " + linkFileName + "." + PartLink.INVENTORYDATE + " as inventoryDate";
+//		query += ", " + linkFileName + "." + PartLink.QUANTITY + " as quantity";
+//		query += ", " + childFileName + ".name as locationName";
+		query += ", concat(";
+		query += "\"part:\"";
+		query += ", " + parentFileName + ".name";
+		query += ", \" date:\"";
+		query += ", " + linkFileName + "." + PartLink.INVENTORYDATE;
+//		query += ", inventoryDate";
+		query += ", \" quantity:\"";
+		query += ", " + linkFileName + "." + PartLink.QUANTITY;
+//		query += ", quantity";
+		query += ", \" at:\"";
+		query += ", " + childFileName + ".name";
+//		query += ", locationName";
+		query += ") as name";
+		query += " from ";
+		// childId of link = id of selected location
+		query += linkFileName + " join " + parentFileName + " on " + linkFileName + ".childId=" + child.id;
+		query += " AND " + parentFileName + ".id=" + linkFileName + ".parentId";
+		query += " join " + childFileName + " on " + childFileName + ".id=" + linkFileName + ".childId";
+		query += " ORDER BY ";
+		query += linkFileName + ".inventoryDate, " + parentFileName + ".name";
+		query += " LIMIT " + IdAndStrings.DISPLAYSIZE;
+		query += " OFFSET " + offset;
+		return query;
+	}
 
 	/**
 	 * 
@@ -872,37 +983,79 @@ public class SearchTarget {
 		 * if there's an entry to the right of this entry AND this entry is a part AND
 		 * the next entry in the row is a location
 		 */
-		if (fmd.isSomethingToMyRight() && fmd.getObject() instanceof Part
-				&& fmd.getToMyRight().obj instanceof Location) {
+		if (!fmd.isSomethingToMyRight())
+			throw new Exception("nothing to my right");
 
-			MyObject parent = fmd.getObject();
-			MyObject child = fmd.getToMyRight().obj;
-			MyLinkObject mlo = new MyLinkObject(parent, child, sVars);
-			String linkFileName = mlo.getMyFileName();
-			String parentFileName = parent.getMyFileName();
-			String childFileName = child.getMyFileName();
-			String query = "";
-			query += "SELECT ";
-			query += parentFileName + "." + "id, ";
-			query += "concat(" + parentFileName + ".name, \" - \", " + linkFileName
-					+ ".inventoryDate, \" (\", partqxchildqxlocation.quantity,\") in \", location.name ) as name ";
-			query += "from ";
-			query += linkFileName + ", " + parentFileName + ", " + childFileName;
-			query += " where " + parentFileName + ".id=" + mlo.getMyFileName() + ".parentId ";
-			if (child.isLoaded())
-				query += " and " + mlo.getMyFileName() + ".childId=" + child.id + " and " + childFileName + ".id="
-						+ child.id;
-			else
-				query += " and " + mlo.getMyFileName() + ".childId=" + childFileName + ".id";
-			query += " ORDER BY ";
-			query += linkFileName + ".inventoryDate, " + parentFileName + ".name";
-			query += " LIMIT " + IdAndStrings.DISPLAYSIZE;
-			query += " OFFSET " + offset;
-			// return soFar;
-			return query;
-		} else
-			// no query string
+		MyObject parent = fmd.getObject();
+		MyObject child = fmd.getToMyRight().obj;
+		if (parent.isLoaded() && child.isLoaded())
 			return "";
+
+		if (parent.isLoaded())
+			// either locations containing the selected part or children of the selected
+			// location
+			return listOfChildren(offset);
+
+		boolean parentIsPart = parent instanceof Part;
+
+		if (parentIsPart && child.isLoaded())
+			return listPartsAtLocation(offset);
+
+		// since the only valid pairs are (part, location) and (location, location), the
+		// child must always be a location. A location can only have one parent.
+		if (child.isLoaded() && !parentIsPart)
+			return "";
+//			throw new Exception("child location is selected. no need to select from list");
+
+		if (!parent.hasInventoryLinkWith(child))
+			throw new Exception("no inventoryLinkWithChild");
+
+		if (parent.isLoaded())
+			return listOfChildren(offset);
+
+		// neither parent nor child are selected. list all inventory links sorted by the
+		// oldest inventory date and then the parent name
+
+		MyLinkObject mlo = new MyLinkObject(parent, child, sVars);
+		String linkFileName = mlo.getMyFileName();
+		String parentFileName = parent.getMyFileName();
+		String childFileName = child.getMyFileName();
+		String query = "";
+		query += "SELECT ";
+		query += linkFileName + "." + "id, ";
+		// build the "as name" field which will be the concatenation of the parent name,
+		// inventory date, quantity (if the parent is a part), and the child name
+		if (parentIsPart)
+			query += "concat(\"part:\"";
+		else
+			query += "concat(\"parent:\"";
+		query += ", " + parentFileName + ".name";
+		// inventory date
+		query += ", \" date:\"";
+		query += ", " + linkFileName + "." + InventoryDate.INVENTORYDATE;
+
+		if (parentIsPart) {
+			query += ", \" quantity:\", " + linkFileName + "." + PartLink.QUANTITY;
+			query += ", \" at:\", child.name";
+		} else
+			query += ", \" child:\", child.name";
+		// end of concatenation
+		query += ")";
+		query += " as name ";
+		query += "from ";
+		query += linkFileName + " inner join " + parentFileName + " on " + linkFileName + ".parentId=" + parentFileName
+				+ ".id inner join ";
+		query += childFileName + " as child on child.id =";
+		query += linkFileName + ".childId";
+		query += " ORDER BY ";
+		query += linkFileName + ".inventoryDate, " + parentFileName + ".name";
+		query += " LIMIT " + IdAndStrings.DISPLAYSIZE;
+		query += " OFFSET " + offset;
+		// return soFar;
+		return query;
+//		} else
+		// no query string
+//			return "";
 	}
 
 	public String getQuery(SEARCHTYPES type, int offset) throws Exception {
@@ -913,8 +1066,8 @@ public class SearchTarget {
 			return setAncestorsQuery(offset);
 		case DESCENDANTS:
 			return setDescendantsQuery(offset);
-		case INVENTORY:
-			return setInventoryQuery(offset);
+//		case INVENTORY:
+//			return setInventoryQuery(offset);
 		case INVENTORYLINKS:
 			return setInventoryLinkQuery(offset);
 //		case ORPHANS:

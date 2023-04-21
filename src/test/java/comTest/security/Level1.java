@@ -93,10 +93,10 @@ public class Level1 extends MyObject {
 		return new MyObjects();
 	}
 
-	@Override
-	// if the object has a date field indicating its last inventory date
-	public boolean hasInventoryField() {
-		return true;
-	}
+//	@Override
+//	// if the object has a date field indicating its last inventory date
+//	public boolean hasInventoryField() {
+//		return true;
+//	}
 
 }

@@ -100,7 +100,7 @@ public class FilteredListTest {
 			objs.get(0).setAncestorsQuery(0);
 			objs.get(0).setDescendantsQuery(0);
 			objs.get(0).setInventoryLinkQuery(0);
-			objs.get(0).setInventoryQuery(0);
+//			objs.get(0).setInventoryQuery(0);
 		} catch (Exception e) {
 			for (StackTraceElement s : e.getStackTrace()) {
 				System.out.println(s);

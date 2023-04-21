@@ -7,7 +7,6 @@ import com.db.MyStatement;
 import com.db.SessionVars;
 import com.parts.inOut.Part;
 import com.parts.location.Location;
-import com.security.MyObject;
 
 /**
  * update the database structures if needed
@@ -24,6 +23,7 @@ public class DBChanges {
 		hasRun = true;
 		checkPartLink(sVars);
 		checkLocation(sVars);
+		checkLocationLocation(sVars);
 	}
 
 	public static boolean hasRun() {
@@ -51,14 +51,14 @@ public class DBChanges {
 			// if the new column does not exist
 			rs = st.executeQuery(
 					"select column_name from information_schema.columns where table_schema = Database() and table_name = '"
-							+ pl.getMyFileName() + "' and column_name = '" + PartsInventory.getColumnName() + "'");
+							+ pl.getMyFileName() + "' and column_name = '" + InventoryDate.getColumnName() + "'");
 
 			if (!rs.next()) {
 				// add it
 				st.executeMyUpdate("ALTER TABLE " + pl.getMyFileName() + " ADD COLUMN `"
-						+ PartsInventory.getColumnName() + "` DATE");
+						+ InventoryDate.getColumnName() + "` DATE");
 				st.executeMyUpdate(
-						"update " + pl.getMyFileName() + " set " + PartsInventory.getColumnName() + "=curdate()");
+						"update " + pl.getMyFileName() + " set " + InventoryDate.getColumnName() + "=curdate()");
 			}
 		} finally {
 			if (st != null)
@@ -67,6 +67,46 @@ public class DBChanges {
 				co.close();
 		}
 	}
+	
+	private static void checkLocationLocation(SessionVars sVars) throws SQLException, Exception {
+		// see if inventory date column exists
+		// ALTER TABLE tableName DROP COLUMN inventoried
+		Connection co = null;
+		MyStatement st = null;
+		ResultSet rs = null;
+		InventoryDate pl = new InventoryDate(new Location(sVars), new Location(sVars), sVars);
+		try {
+			co = sVars.connection.getConnection();
+			st = new MyStatement(co);
+
+			// if the `inventoried` column exists
+			rs = st.executeQuery(
+					"select column_name from information_schema.columns where table_schema = Database() AND table_name = '"
+							+ pl.getMyFileName() + "' and column_name = 'inventoried'");
+			if (rs.next())
+				// delete it
+				st.executeMyUpdate("ALTER TABLE " + pl.getMyFileName() + " DROP COLUMN `inventoried`");
+			// if the new column does not exist
+			rs = st.executeQuery(
+					"select column_name from information_schema.columns where table_schema = Database() and table_name = '"
+							+ pl.getMyFileName() + "' and column_name = '" + InventoryDate.getColumnName() + "'");
+
+			if (!rs.next()) {
+				// add it
+				st.executeMyUpdate("ALTER TABLE " + pl.getMyFileName() + " ADD COLUMN `"
+						+ InventoryDate.getColumnName() + "` DATE");
+				st.executeMyUpdate(
+						"update " + pl.getMyFileName() + " set " + InventoryDate.getColumnName() + "=curdate()");
+			}
+		} finally {
+			if (st != null)
+				st.close();
+			if (co != null)
+				co.close();
+		}
+	}
+	
+	
 	private static void checkLocation(SessionVars sVars) throws SQLException, Exception {
 		Connection co = null;
 		MyStatement st = null;
@@ -86,14 +126,14 @@ public class DBChanges {
 			// if the new column does not exist
 			rs = st.executeQuery(
 					"select column_name from information_schema.columns where table_schema = Database() and table_name = '"
-							+ location.getMyFileName() + "' and column_name = '" + MyObject.INVENTORYFIELDNAME + "'");
+							+ location.getMyFileName() + "' and column_name = '" + InventoryDate.INVENTORYDATE + "'");
 
 			if (!rs.next()) {
 				// add it
 				st.executeMyUpdate("ALTER TABLE " + location.getMyFileName() + " ADD COLUMN `"
-						+ MyObject.INVENTORYFIELDNAME + "` DATE");
+						+ InventoryDate.INVENTORYDATE + "` DATE");
 				st.executeMyUpdate(
-						"update " + location.getMyFileName() + " set " + MyObject.INVENTORYFIELDNAME + "=curdate()");
+						"update " + location.getMyFileName() + " set " + InventoryDate.INVENTORYDATE + "=curdate()");
 			}
 		} finally {
 			if (st != null)

@@ -33,6 +33,8 @@ public class AttachToFormLocationLocation extends AttachToFormPair {
 			ret.submitButton("Make '" + leftAndRight.left.obj.getInstanceName() + "' a child of '"
 					+ leftAndRight.right.obj.getInstanceName() + "'", MOVETONEWPARENTBUTTON);
 		}
+//		ret.rawText("adding AttachToFormPair super getForm<br>");
+//		ret.addAll(super.getForm(sVars));
 		return ret;
 	}
 
@@ -51,6 +53,8 @@ public class AttachToFormLocationLocation extends AttachToFormPair {
 			leftLocation.moveToNewParentRecursive(rightLocation);
 			throw new EndOfInputException(ret);
 		}
+		ret.rawText("adding AttachToFormPair super extractParams<br>");
+		ret.addAll(super.extractParams(sVars));
 		return ret;
 	}
 }

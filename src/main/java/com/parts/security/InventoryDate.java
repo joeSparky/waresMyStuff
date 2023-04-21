@@ -15,13 +15,13 @@ import com.db.Strings;
 import com.security.MyLinkObject;
 import com.security.MyObject;
 
-public class PartsInventory extends MyLinkObject {
+public class InventoryDate extends MyLinkObject {
 
-	public PartsInventory(MyObject parent, MyObject child, SessionVars sVars) throws Exception {
+	public InventoryDate(MyObject parent, MyObject child, SessionVars sVars) throws Exception {
 		super(parent, child, sVars);
 	}
-
-	private static final String INVENTORYDATE = "inventoryDate";
+	
+	public static final String INVENTORYDATE = "inventoryDate";
 	boolean justInventoried = false;
 	private Date inventoryDate = null;
 
@@ -59,7 +59,7 @@ public class PartsInventory extends MyLinkObject {
 			return new DoubleStrings();
 	}
 
-	protected PartsInventory extractInfo(ResultSet rs) throws Exception {
+	protected InventoryDate extractInfo(ResultSet rs) throws Exception {
 		inventoryDate = new Date(0);
 		inventoryDate = rs.getDate(INVENTORYDATE);
 		super.extractInfo(rs);

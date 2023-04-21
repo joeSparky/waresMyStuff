@@ -988,18 +988,18 @@ public abstract class MyObject implements HasTableInterface {
 //	}
 
 	// database column name
-	public static final String INVENTORYFIELDNAME = "inventoryDate";
+//	public static final String INVENTORYFIELDNAME = "inventoryDate";
 	// number of oldest records to present to the user
-	public static final int INVENTORYRECORDS = 5;
+//	public static final int INVENTORYRECORDS = 5;
 
 	// if the object has a date field indicating its last inventory date
-	public boolean hasInventoryField() {
-		return false;
-	}
+//	public boolean hasInventoryField() {
+//		return false;
+//	}
 
-	public FormsArray markAsInventoried() throws Exception {
-		return new FormsArray();
-	}
+//	public FormsArray markAsInventoried() throws Exception {
+//		return new FormsArray();
+//	}
 
 	/**
 	 * if this object has an inventory link with a child

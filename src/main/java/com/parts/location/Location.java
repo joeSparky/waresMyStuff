@@ -2,14 +2,7 @@ package com.parts.location;
 
 import java.lang.invoke.MethodHandles;
 import java.sql.ResultSet;
-//import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import com.db.DoubleString;
-import com.db.DoubleStrings;
 import com.db.SessionVars;
-import com.db.Strings;
 import com.forms.FormsArray;
 import com.parts.inOut.Part;
 import com.parts.security.PartLink;
@@ -36,8 +29,8 @@ public class Location extends MyObject {
 	public static final int NAMELENGTHMINIMUM = 3;
 	public static final int MAXINVENTORY = 25;
 //	private static final String INVENTORYDATE = "inventoryDate";
-	boolean justInventoried = false;
-	Date inventoryDate;
+//	boolean justInventoried = false;
+//	Date inventoryDate;
 	SessionVars sVars = null;
 
 	public Location(SessionVars sVars) throws Exception {
@@ -49,44 +42,44 @@ public class Location extends MyObject {
 
 	@Override
 	public Location extractInfo(ResultSet rs) throws Exception {
-		inventoryDate = new Date(0);
-		inventoryDate = rs.getDate(MyObject.INVENTORYFIELDNAME);
+//		inventoryDate = new Date(0);
+//		inventoryDate = rs.getDate(MyObject.INVENTORYFIELDNAME);
 		super.extractInfo(rs);
 		return this;
 	}
 
 	public void clear() {
-		justInventoried = false;
-		inventoryDate = null;
+//		justInventoried = false;
+//		inventoryDate = null;
 		super.clear();
 	}
 
-	@Override
-	public Strings extendNewTable() {
-		Strings ret = new Strings();
-		ret.add("`" + MyObject.INVENTORYFIELDNAME + "` DATE NOT NULL");
-		return ret;
-	}
+//	@Override
+//	public Strings extendNewTable() {
+//		Strings ret = new Strings();
+//		ret.add("`" + MyObject.INVENTORYFIELDNAME + "` DATE NOT NULL");
+//		return ret;
+//	}
 
-	@Override
-	public DoubleStrings extendAdd() {
-		DoubleStrings ret = new DoubleStrings();
-		inventoryDate = new Date();
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
-		String stringDate = formatter.format(inventoryDate);
-		ret.add(new DoubleString(MyObject.INVENTORYFIELDNAME, stringDate));
-		return ret;
-	}
+//	@Override
+//	public DoubleStrings extendAdd() {
+//		DoubleStrings ret = new DoubleStrings();
+////		inventoryDate = new Date();
+//		SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+//		String stringDate = formatter.format(inventoryDate);
+//		ret.add(new DoubleString(MyObject.INVENTORYFIELDNAME, stringDate));
+//		return ret;
+//	}
 
-	@Override
-	public DoubleStrings extendUpdate() {
-		if (justInventoried)
-			// insert the current date in the inventory field
-			return extendAdd();
-		else
-			// don't update the inventory field
-			return new DoubleStrings();
-	}
+//	@Override
+//	public DoubleStrings extendUpdate() {
+//		if (justInventoried)
+//			// insert the current date in the inventory field
+//			return extendAdd();
+//		else
+//			// don't update the inventory field
+//			return new DoubleStrings();
+//	}
 
 	@Override
 	public String getAName() {
@@ -195,8 +188,6 @@ public class Location extends MyObject {
 		}
 	}
 
-	
-
 	@Override
 	public boolean isRecursive() {
 		return true;
@@ -226,8 +217,6 @@ public class Location extends MyObject {
 		return MethodHandles.lookup().lookupClass().getSimpleName().toLowerCase();
 	}
 
-	
-
 	@Override
 	public MyObjects listParentsClasses() throws Exception {
 		MyObjects objs = new MyObjects();
@@ -252,46 +241,36 @@ public class Location extends MyObject {
 //			return super.getAttachToForms(fmd);
 //	}
 
-	public void setJustInventoried(boolean inventoried) {
-		justInventoried = inventoried;
-	}
+//	public void setJustInventoried(boolean inventoried) {
+//		justInventoried = inventoried;
+//	}
 
 //	public static String getColumnName() {
 //		return INVENTORYDATE;
 //	}
 
-	public Date getInventoryDate() throws Exception {
-		if (inventoryDate == null)
-			throw new Exception("null inventoryDate.");
-		return inventoryDate;
-	}
-
-	@Override
-	public boolean hasInventoryField() {
-		return true;
-	}
-
-	@Override
-	public FormsArray markAsInventoried() throws Exception {
-		FormsArray ret = new FormsArray();
-		setJustInventoried(true);
-		update();
-		ret.errorToUser(getInstanceName() + " is marked as being in the correct location.");
-		return ret;
-	}
+//	public Date getInventoryDate() throws Exception {
+//		if (inventoryDate == null)
+//			throw new Exception("null inventoryDate.");
+//		return inventoryDate;
+//	}
 
 //	@Override
-//	public FormsArray doSanityUpdateAddTryAgain(FormsMatrixDynamic fm) throws Exception {
+//	public boolean hasInventoryField() {
+//		return true;
+//	}
+
+//	@Override
+//	public FormsArray markAsInventoried() throws Exception {
 //		FormsArray ret = new FormsArray();
-//		sanity();
-//		if (isLoaded()) {
-//			// update the object with the name change
-//			update();
-//			// inform the user about the update
-//			ret.rawText(getLogicalName() + " '" + getInstanceName() + "' updated.<br>");
-//			throw new EndOfInputException(ret);
-//		
-//		}
+//		setJustInventoried(true);
+//		update();
+//		ret.errorToUser(getInstanceName() + " is marked as being in the correct location.");
 //		return ret;
 //	}
+
+	@Override
+	public boolean hasInventoryLinkWith(MyObject child) {
+		return (child instanceof Location);
+	}
 }

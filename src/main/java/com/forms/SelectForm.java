@@ -15,12 +15,12 @@ public class SelectForm extends SmartForm {
 	public SelectForm(SessionVars sVars, String uniqueName) throws Exception {
 		super(sVars, uniqueName);
 	}
-	
+
 	static final String CANCELBUTTON = SelectForm.class.getCanonicalName() + "a";
 	static final String DELETEBUTTON = SelectForm.class.getCanonicalName() + "b";
 	static final String DELETETESTBUTTON = SelectForm.class.getCanonicalName() + "c";
 	static String DESCENDANTBOX = SelectForm.class.getCanonicalName() + "d";
-	static String INVENTORYBUTTON = SelectForm.class.getCanonicalName() + "e";
+//	static String INVENTORYBUTTON = SelectForm.class.getCanonicalName() + "e";
 	static String PEERBOX = SelectForm.class.getCanonicalName() + "f";
 	static String PARENTBUTTON = SelectForm.class.getCanonicalName() + "g";
 
@@ -60,9 +60,9 @@ public class SelectForm extends SmartForm {
 				ret.newLine();
 			}
 		}
-		if (currentObject.hasInventoryField()) {
-			ret.addAll(addInventoryButton(sVars, myVars));
-		}
+//		if (currentObject.hasInventoryField()) {
+//			ret.addAll(addInventoryButton(sVars, myVars));
+//		}
 
 		// dump the path to the top using the level above target as a parent type
 		MyObjectsArray pathToTheTop = new MyObjectsArray();
@@ -119,15 +119,15 @@ public class SelectForm extends SmartForm {
 			sVars.fmd.resetAllIdAndStrings();
 			throw new EndOfInputRedoQueries(ret);
 		}
-		if (sVars.hasParameterKey(INVENTORYBUTTON)) {
-			if (!target.isOrphan(target)) {
-				ret.addAll(target.markAsInventoried());
-//				ret.addAll(updateTheCaller(sVars, target));
-			} else {
-				ret.errorToUser(target.getInstanceName() + " is an orphan or is at the top of its members");
-			}
-			throw new EndOfInputException(ret);
-		}
+//		if (sVars.hasParameterKey(INVENTORYBUTTON)) {
+//			if (!target.isOrphan(target)) {
+//				ret.addAll(target.markAsInventoried());
+////				ret.addAll(updateTheCaller(sVars, target));
+//			} else {
+//				ret.errorToUser(target.getInstanceName() + " is an orphan or is at the top of its members");
+//			}
+//			throw new EndOfInputException(ret);
+//		}
 //		Anchor anchor = myVars.fmd.getAnchor();
 //		ret.addAll(myVars.fmd.extractEditAddFormParams(sVars));
 //		ret.addAll(super.extractParams(sVars, uniqueName));
@@ -263,18 +263,6 @@ public class SelectForm extends SmartForm {
 		return ret;
 	}
 
-	public FormsArray addInventoryButton(SessionVars sVars, MyVars myVars) throws Exception {
-		FormsArray ret = new FormsArray();
-		MyObject target = sVars.fmd.getObject();
-		if (target.isOrphan(target))
-			return ret;
-		// get the target's parent
-		MyObject parent = target.getSingleParent(target);
-		ret.submitButton("Mark " + target.getInstanceName() + " as stored at " + parent.getInstanceName(),
-				INVENTORYBUTTON);
-		return ret;
-	}
-
 	protected FormsArray addDescendant(SessionVars sVars, MyVars myVars) throws Exception {
 		FormsArray ret = new FormsArray();
 		MyObject target = sVars.fmd.getObject();
@@ -284,9 +272,7 @@ public class SelectForm extends SmartForm {
 			ret.startTable();
 			ret.rawText("Add a descendant to " + target.getInstanceName());
 			myVars.descendant = target.getNew();
-			ret.addAll(myVars.descendant.getNameForm(DESCENDANTBOX,
-//					inState, 
-					myVars.descendant.isLoaded()));
+			ret.addAll(myVars.descendant.getNameForm(DESCENDANTBOX, myVars.descendant.isLoaded()));
 			ret.endTable();
 		} else {
 			myVars.descendant = null;

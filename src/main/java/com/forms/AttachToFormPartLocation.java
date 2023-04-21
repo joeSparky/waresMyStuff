@@ -35,6 +35,39 @@ public class AttachToFormPartLocation extends AttachToFormPair {
 		}
 	}
 
+//	public FormsArray getForm(SessionVars sVars) throws Exception {
+//		FormsArray ret = new FormsArray();
+//		ret.addAll(super.getForm(sVars));
+//		LeftAndRight leftAndRight = new LeftAndRight(sVars);
+//		if (leftAndRight.left.obj.isLoaded()) {
+//			if (leftAndRight.right.obj.isLoaded()) {
+//				// both sides loaded, nothing to select
+//
+//			} else {
+//				// left loaded, right not loaded
+//				ret.rawText("descendants of " + leftAndRight.left.obj.getInstanceName() + " of "
+//						+ leftAndRight.right.obj.getLogicalName());
+//				IdAndStrings idAndStrings = new IdAndStrings(sVars.fmd, SearchTarget.SEARCHTYPES.INVENTORYLINKS, sVars);
+//				ret.addAll(idAndStrings.getForm(sVars));
+//			}
+//		} else {
+//			// left is not loaded
+//			if (leftAndRight.right.obj.isLoaded()) {
+//				ret.rawText("ancestors of " + leftAndRight.right.obj.getInstanceName() + " from "
+//						+ leftAndRight.left.obj.getLogicalName());
+//				IdAndStrings idAndStrings = new IdAndStrings(sVars.fmd, SearchTarget.SEARCHTYPES.INVENTORYLINKS, sVars);
+//				ret.addAll(idAndStrings.getForm(sVars));
+//			} else {
+//				// neither is loaded
+//				ret.rawText("all combinations of " + leftAndRight.left.obj.getLogicalName() + " and "
+//						+ leftAndRight.right.obj.getLogicalName());
+//				IdAndStrings idAndStrings = new IdAndStrings(sVars.fmd, SearchTarget.SEARCHTYPES.INVENTORYLINKS, sVars);
+//				ret.addAll(idAndStrings.getForm(sVars));
+//			}
+//		}
+//		return ret;
+//	}
+
 	@Override
 	// the link exists. get the PartLink
 	public FormsArray removeLink(SessionVars sVars, LeftAndRight leftAndRight) throws Exception {

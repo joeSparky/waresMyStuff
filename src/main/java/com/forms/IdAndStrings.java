@@ -12,6 +12,7 @@ import java.util.Set;
 import com.db.MyStatement;
 import com.db.SessionVars;
 import com.forms.SearchTarget.SEARCHTYPES;
+import com.parts.security.InventoryDate;
 import com.parts.security.PartLink;
 import com.security.MyObject;
 
@@ -68,6 +69,7 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 		public String PREVIOUS = IdAndStrings.class.getCanonicalName() + searchType.toString() + "d";
 		public String REQUESTALIST = IdAndStrings.class.getCanonicalName() + searchType.toString() + "e";
 		public String INVENTORYFROMLIST = IdAndStrings.class.getCanonicalName() + searchType.toString() + "f";
+		public String SELECTFROMINVENTORYLIST = IdAndStrings.class.getCanonicalName() + searchType.toString() + "g";
 
 		public MyVars(SessionVars sVars) throws Exception {
 			super(sVars, IdAndStrings.class.getCanonicalName() + "-" + searchType.toString());
@@ -234,26 +236,22 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 			throw new EndOfInputRedoQueries(ret);
 		}
 
-		if (sVars.getParameterKeys().contains(myVars.INVENTORYFROMLIST)) {
+		if (sVars.getParameterKeys().contains(myVars.SELECTFROMINVENTORYLIST)) {
 			int id = -1;
 			try {
-				id = Integer.parseInt(sVars.getParameterValue(myVars.INVENTORYFROMLIST));
+				// get the id of the inventory link
+				id = Integer.parseInt(sVars.getParameterValue(myVars.SELECTFROMINVENTORYLIST));
 			} catch (Exception e) {
 				ret.errorToUser("Please make a selection before clicking the Select button");
 				throw new EndOfInputException(ret);
 			}
-			MyObject obj = fm.getObject();
-			obj.find(id);
-			MyObject toTheRight = fm.getObjectBelowMeInRow();
-			if (obj.childExists(toTheRight)) {
-				PartLink pl = new PartLink(obj, toTheRight, sVars);
-				pl.find();
-				pl.setInventoried(true);
-				pl.update();
-			} else {
-				throw new Exception("PartLink does not exist.");
-			}
-			obj.clear();
+			MyObject parent = fm.getObject().getNew();
+			MyObject child = fm.getObjectBelowMeInRow().getNew();
+			InventoryDate inventoryDate = new InventoryDate(parent, child, sVars);
+			inventoryDate.find(id);
+			inventoryDate.setInventoried(true);
+			inventoryDate.update();
+//			fm.resetAllIdAndStrings();
 			throw new EndOfInputRedoQueries(ret);
 		}
 
@@ -263,18 +261,17 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 	public FormsArray getForm(SessionVars sVars) throws Exception {
 		FormsArray ret = new FormsArray();
 		MyVars myVars = (MyVars) new MyVars(sVars).get();
-		if (fm.getObject().isLoaded())
-			return ret;
-		// if the object does not have an inventory field
-		if (searchType == SearchTarget.SEARCHTYPES.INVENTORY && !fm.getObject().hasInventoryField())
-			return ret;
-//		if (giveMeAListButton) {
-//			if (fm.get(fm.row).get(fm.column).shouldGetAButton(fm, searchType))
-//
-//				ret.submitButton("Select from " + SearchTarget.getIdAndStringLabels(searchType) + " list",
-//						myVars.REQUESTALIST);
+//		if (fm.getObject().isLoaded())
 //			return ret;
-//		}
+		// if the object does not have an inventory field
+//		if (searchType == SearchTarget.SEARCHTYPES.INVENTORY && !fm.getObject().hasInventoryField())
+//			return ret;
+		if (searchType == SearchTarget.SEARCHTYPES.INVENTORYLINKS) {
+			if (!fm.isObjectBelowMeInRow())
+				return ret;
+			if (!fm.getObject().hasInventoryLinkWith(fm.getObjectBelowMeInRow()))
+				return ret;
+		}
 		doQuery(moveSearch);
 		if (isEmpty()) {
 			if (!fm.getObject().searchString.isEmpty()) {
@@ -297,9 +294,12 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 				// allow room for the "no selection" option
 				ret.startSingleSelection(myVars.SELECTFROMLIST, Math.min(DISPLAYSIZE + 1, this.size() + 1), false);
 				break;
-			case INVENTORY:
+//			case INVENTORY:
+//				ret.startSingleSelection(myVars.INVENTORYFROMLIST, Math.min(DISPLAYSIZE + 1, this.size() + 1), false);
+//				break;
 			case INVENTORYLINKS:
-				ret.startSingleSelection(myVars.INVENTORYFROMLIST, Math.min(DISPLAYSIZE + 1, this.size() + 1), false);
+				ret.startSingleSelection(myVars.SELECTFROMINVENTORYLIST, Math.min(DISPLAYSIZE + 1, this.size() + 1),
+						false);
 				break;
 			default:
 				break;
@@ -320,9 +320,15 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 				ret.submitButton("Submit selected object from " + SearchTarget.getIdAndStringLabels(searchType),
 						myVars.SELECTFROMLIST);
 				break;
-			case INVENTORY:
+//			case INVENTORY:
+//				ret.submitButton("Mark as inventoried " + searchType.toString(), myVars.INVENTORYFROMLIST);
+//				break;
 			case INVENTORYLINKS:
-				ret.submitButton("Mark as inventoried " + searchType.toString(), myVars.INVENTORYFROMLIST);
+				if (fm.getObjectBelowMeInRow().isLoaded())
+					ret.submitButton("Mark as inventoried " + searchType.toString(), myVars.SELECTFROMINVENTORYLIST);
+				else
+					ret.submitButton("Submit selected object from " + SearchTarget.getIdAndStringLabels(searchType),
+							myVars.SELECTFROMINVENTORYLIST);
 				break;
 			}
 			if (so.showNextButton())
