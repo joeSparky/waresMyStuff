@@ -15,6 +15,7 @@ import com.forms.FormsMatrixDynamic;
 import com.forms.IdAndString;
 import com.forms.SearchTarget;
 import com.forms.Utils;
+import com.parts.security.InventoryDate;
 
 /**
  * common methods for users, roles, and warehouses
@@ -303,7 +304,6 @@ public abstract class MyObject implements HasTableInterface {
 		}
 		return this;
 	}
-	
 
 	/**
 	 * fields and values for add
@@ -532,7 +532,6 @@ public abstract class MyObject implements HasTableInterface {
 		return objs;
 	}
 
-
 	public MyObjects listAllParentsOfType(MyObject parent) throws Exception {
 		return new MyLinkObject(parent, this, sVars).listParentsOfChild();
 	}
@@ -567,7 +566,8 @@ public abstract class MyObject implements HasTableInterface {
 	public boolean nameChanged(SessionVars sVars, String boxName) throws Exception {
 		return nameInstance.nameChanged(sVars, boxName);
 	}
-/**
+
+	/**
 	 * record number of anchor in anchor database
 	 */
 	public int anchorId = 0;
@@ -629,10 +629,21 @@ public abstract class MyObject implements HasTableInterface {
 	 * @throws Exception
 	 */
 	public void addChild(MyObject child) throws Exception {
-		MyLinkObject mlo = new MyLinkObject(this, child, sVars);
-		if (mlo.linkExists())
-			throw new Exception("link already exists.<br>" + new Exception().getStackTrace()[0]);
-		mlo.add();
+		if (this.hasInventoryLinkWith(child)) {
+			InventoryDate invDate = new InventoryDate(this, child, sVars);
+			if (invDate.linkExists()) {
+				invDate.setInventoried(true);
+				invDate.update();
+			} else {
+				invDate.setInventoried(true);
+				invDate.add();
+			}
+		} else {
+			MyLinkObject mlo = new MyLinkObject(this, child, sVars);
+			if (mlo.linkExists())
+				throw new Exception("link already exists.<br>" + new Exception().getStackTrace()[0]);
+			mlo.add();
+		}
 	}
 
 	/**
@@ -712,7 +723,6 @@ public abstract class MyObject implements HasTableInterface {
 		new MyLinkObject(this, child, sVars).sanity();
 	}
 
-	
 	public String getCanonicalName() {
 		return getClass().getCanonicalName();
 	}

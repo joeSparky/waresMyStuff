@@ -132,10 +132,4 @@ public class Name {
 		}
 		return false;
 	}
-
-//	public int compareTo(Name nameInstance) {
-//		// TODO Auto-generated method stub
-//		throw new ExceptionCoding("not yet");
-//		return 0;
-//	}
 }

@@ -572,7 +572,6 @@ public class MyLinkObject implements HasTableInterface {
 
 	@Override
 	public String getCanonicalName() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

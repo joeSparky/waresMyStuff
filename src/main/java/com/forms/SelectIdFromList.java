@@ -50,7 +50,6 @@ public class SelectIdFromList extends SmartForm {
 		MyObject obj = myVars.fmd.getObject();
 		if (sVars.hasParameterKey(SEARCH) && (!sVars.getParameterValue(SEARCH).equals(obj.searchString))) {
 			obj.searchString = sVars.getParameterValue(SEARCH).toLowerCase();
-			myVars.fmd.resetAllIdAndStrings();
 			throw new EndOfInputRedoQueries(new FormsArray());
 		}
 		return myVars.fmd.getRow().get(myVars.fmd.column).extractParams(sVars);

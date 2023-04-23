@@ -155,7 +155,6 @@ public class AttachToFormPartLocation extends AttachToFormPair {
 			}
 
 			myVars.inOutQuantity = 1;
-			sVars.fmd.resetAllIdAndStrings();
 			throw new EndOfInputException(ret);
 		}
 		if (sVars.hasParameterKey(REMOVEBUTTON)) {
@@ -173,7 +172,6 @@ public class AttachToFormPartLocation extends AttachToFormPair {
 				pl.updateSetQuantity(newQuant, false);
 				myVars.inOutQuantity = 1;
 			}
-			sVars.fmd.resetAllIdAndStrings();
 			throw new EndOfInputException(ret);
 		}
 		if (sVars.hasParameterKey(INVENTORYBUTTON)) {

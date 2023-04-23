@@ -39,20 +39,20 @@ public class SearchTargets extends ArrayList<SearchTarget> {
 	}
 
 
-	/**
-	 * initialize the SearchTargets array. Return the index of the lowest selected
-	 * object.
-	 * 
-	 * @param myResults
-	 * @return
-	 */
-	public void initResults() {
-
-		// for each object in MyObjectsArray
-		for (int myIndex = 0; myIndex < size(); myIndex++) {
-			get(myIndex).clear();
-		}
-	}
+//	/**
+//	 * initialize the SearchTargets array. Return the index of the lowest selected
+//	 * object.
+//	 * 
+//	 * @param myResults
+//	 * @return
+//	 */
+//	public void initResults() {
+//
+//		// for each object in MyObjectsArray
+//		for (int myIndex = 0; myIndex < size(); myIndex++) {
+//			get(myIndex).clear();
+//		}
+//	}
 
 	
 	/**

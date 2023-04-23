@@ -52,7 +52,7 @@ public class SelectForm extends SmartForm {
 		ret.addAll(getFormSpare1());
 		if (currentObject.isRecursive()) {
 			ret.addAll(parentButton(sVars, myVars));
-			ret.addAll(addKidsButtons(sVars, myVars));
+//			ret.addAll(addKidsButtons(sVars, myVars));
 			ret.addAll(addDescendant(sVars, myVars));
 			ret.addAll(addPeer(sVars, myVars));
 			if (currentObject.isOrphan(currentObject)) {
@@ -97,7 +97,6 @@ public class SelectForm extends SmartForm {
 		MyObject target = sVars.fmd.getObject();
 		if (sVars.hasParameterKey(CANCELBUTTON)) {
 			sVars.fmd.getObject().clear();
-			sVars.fmd.resetAllIdAndStrings();
 			throw new EndOfInputRedoQueries(ret);
 		}
 		if (sVars.hasParameterKey(DELETETESTBUTTON)) {
@@ -110,13 +109,12 @@ public class SelectForm extends SmartForm {
 				ret.errorToUser(target.getInstanceName());
 				target.deleteUnconditionally();
 				ret.errorToUser(" was deleted.");
-				sVars.fmd.get(sVars.fmd.row).get(sVars.fmd.column).clear();
+//				sVars.fmd.get(sVars.fmd.row).get(sVars.fmd.column).clear();
 //				objs.clearChildren(index);
 			} catch (Exception e) {
 				ret.errorToUser(" was not deleted.");
 				ret.errorToUser(e);
 			}
-			sVars.fmd.resetAllIdAndStrings();
 			throw new EndOfInputRedoQueries(ret);
 		}
 //		if (sVars.hasParameterKey(INVENTORYBUTTON)) {
@@ -139,7 +137,6 @@ public class SelectForm extends SmartForm {
 			MyObject parent = target.getSingleParent(target);
 			// switch the object to the parent
 			target.find(parent.id);
-			sVars.fmd.resetAllIdAndStrings();
 			throw new EndOfInputRedoQueries(ret);
 		}
 		for (String thisKey : myVars.childToId.keySet()) {
@@ -147,7 +144,6 @@ public class SelectForm extends SmartForm {
 				MyObject tmp = target.getNew();
 				tmp.find(myVars.childToId.get(thisKey));
 				target.find(tmp.id);
-				sVars.fmd.resetAllIdAndStrings();
 				throw new EndOfInputRedoQueries(ret);
 			}
 		}
@@ -315,7 +311,6 @@ public class SelectForm extends SmartForm {
 				// if target has a parent
 				if (parent != null)
 					parent.addChild(myVars.peer);
-				sVars.fmd.resetAllIdAndStrings();
 				throw new EndOfInputException(ret);
 			}
 		}
@@ -333,7 +328,6 @@ public class SelectForm extends SmartForm {
 				myVars.descendant.doSanityUpdateAddTryAgain(sVars.fmd);
 				target.addChild(myVars.descendant);
 				target.find(myVars.descendant.id);
-				sVars.fmd.resetAllIdAndStrings();
 				throw new EndOfInputRedoQueries(ret);
 			}
 		}

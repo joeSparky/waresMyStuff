@@ -432,7 +432,7 @@ public class Utilities {
 		fdm.row = 0;
 		fdm.column = 1;
 
-		objs.initResults();
+//		objs.initResults();
 		return objs;
 	}
 

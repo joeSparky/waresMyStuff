@@ -3,7 +3,6 @@ package com.forms;
 import java.util.ArrayList;
 
 import com.db.SessionVars;
-import com.forms.SearchTarget.SEARCHTYPES;
 import com.security.ExceptionCoding;
 import com.security.MyLinkObject;
 import com.security.MyObject;
@@ -70,23 +69,10 @@ public class FormsMatrixDynamic extends ArrayList<SearchTargets> {
 			tmpTarget.fmd = this;
 //			tmpTarget.myColumn = myColumn;
 //			tmpTarget.myRow = row;
-			for (SEARCHTYPES s : SEARCHTYPES.values())
-				tmpTarget.idAndStrings.get(s).fm = this;
+//			for (SEARCHTYPES s : SEARCHTYPES.values())
+//				tmpTarget.idAndStrings.get(s).fm = this;
 		}
 		return returnFlag;
-	}
-
-	/**
-	 * reset all IdAndStrings whenever something is selected, unselected, or deleted
-	 */
-	public void resetAllIdAndStrings() {
-		for (int row = 0; row < size(); row++) {
-			for (int column = 0; column < get(row).size(); column++) {
-				for (SEARCHTYPES s : SEARCHTYPES.values()) {
-					get(row).get(column).idAndStrings.get(s).clear();
-				}
-			}
-		}
 	}
 
 	public MyObject getObject() {
@@ -236,7 +222,6 @@ public class FormsMatrixDynamic extends ArrayList<SearchTargets> {
 		if (sVars.hasParameterKey(SEARCHBOX)
 				&& (!sVars.getParameterValue(SEARCHBOX).equals(getObject().searchString))) {
 			getObject().searchString = sVars.getParameterValue(SEARCHBOX).toLowerCase();
-			resetAllIdAndStrings();
 			throw new EndOfInputRedoQueries(ret);
 		}
 		return ret;

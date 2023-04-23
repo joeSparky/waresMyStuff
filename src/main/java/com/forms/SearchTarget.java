@@ -2,8 +2,6 @@ package com.forms;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-
 import com.db.SessionVars;
 import com.parts.forms.AttachToFormLocationLocation;
 import com.parts.forms.PartLocationLocation;
@@ -55,7 +53,7 @@ public class SearchTarget {
 	public enum SEARCHTYPES {
 		ALL, DESCENDANTS,
 //		INVENTORY, 
-		INVENTORYLINKS, ANCESTORS
+		INVENTORYLINKS, ANCESTORS, MYDESCENDANTS
 	}
 
 	public static String getIdAndStringLabels(SEARCHTYPES types) {
@@ -70,27 +68,10 @@ public class SearchTarget {
 //			return "Inventory";
 		case INVENTORYLINKS:
 			return "Inventory Links";
+		case MYDESCENDANTS:
+			return "My Descendants";
 		}
 		return null;
-	}
-
-	public boolean shouldGetAButton(FormsMatrixDynamic fmd, SEARCHTYPES type) {
-//		MyObject obj = fmd.getObject();
-		switch (type) {
-		case ALL:
-			return true;
-//		case INVENTORY:
-//			return obj.hasInventoryField();
-		case ANCESTORS:
-			// needs searchTarget below it and the object below must be loaded
-			return fmd.column < fmd.getRow().size() - 1 && fmd.getRow().get(fmd.column + 1).obj.isLoaded();
-		case DESCENDANTS:
-			// needs a search target above it and the object above must be loaded
-			return fmd.column > 0 && fmd.getRow().get(fmd.column - 1).obj.isLoaded();
-		case INVENTORYLINKS:
-			return fmd.column > 0;
-		}
-		return true;
 	}
 
 	public EDITSELECTTYPE editSelectType = EDITSELECTTYPE.NOTINITIALIZED;
@@ -103,34 +84,10 @@ public class SearchTarget {
 	public SearchTarget(MyObject obj, SessionVars sVars) {
 		this.sVars = sVars;
 		this.obj = obj;
-		clear();
 	}
 
 	SessionVars sVars = null;
 	public FormsMatrixDynamic fmd = null;
-
-	HashMap<SEARCHTYPES, IdAndStrings> idAndStrings = new HashMap<SEARCHTYPES, IdAndStrings>();
-
-	public IdAndStrings getIdAndStrings(SearchTarget.SEARCHTYPES type) throws Exception {
-		if (!idAndStrings.containsKey(type))
-			throw new Exception(type.toString() + " is not in " + idAndStrings.toString());
-		return idAndStrings.get(type);
-	}
-
-	public void clear() {
-//		ancestorSource = 
-//				descendantSource = "";
-		for (SEARCHTYPES s : SEARCHTYPES.values()) {
-			IdAndStrings tmp = new IdAndStrings(fmd, s, sVars);
-			idAndStrings.put(s, tmp);
-		}
-	}
-
-	SelectForm sf = null;
-//	AttachToFormPair toTheLeftAndRight = null;
-//	AttachToFormPair toTheRight = null;
-//	AttachToFormPair toTheLeft = null;
-
 	String CANCELOBJECT = Utils.getNextString();
 	String CLEARSEARCH = Utils.getNextString();
 
@@ -171,7 +128,7 @@ public class SearchTarget {
 
 			// for each of the search type, such as ancestors, descendants, orphans, ...
 			for (SEARCHTYPES s : SEARCHTYPES.values()) {
-				IdAndStrings tmp = idAndStrings.get(s);
+				IdAndStrings tmp = new IdAndStrings(fmd, sVars, s);
 				ret.addAll(tmp.getForm(sVars));
 			}
 
@@ -321,7 +278,6 @@ public class SearchTarget {
 
 		if (sVars.hasParameterKey(CANCELOBJECT)) {
 			fmd.getObject().clear();
-			fmd.resetAllIdAndStrings();
 			throw new EndOfInputException(ret);
 		}
 
@@ -329,31 +285,15 @@ public class SearchTarget {
 			obj.searchString = "";
 			throw new EndOfInputException(ret);
 		}
-
-		boolean searchChanged = false;
-		try {
-			ret.addAll(obj.extractSearchFormParams(sVars));
-		} catch (EndOfInputException e) {
-			searchChanged = true;
-		}
-		if (searchChanged) {
-			for (SEARCHTYPES s : SEARCHTYPES.values())
-				idAndStrings.get(s).clear();
-			throw new EndOfInputException(ret);
-		}
+		ret.addAll(obj.extractSearchFormParams(sVars));
 		for (SEARCHTYPES s : SEARCHTYPES.values())
-			ret.addAll(idAndStrings.get(s).extractParams(sVars));
-
-//		for (FormsMatrixDynamic.PARTNER direction : FormsMatrixDynamic.PARTNER.values()) {
+			ret.addAll(new IdAndStrings(fmd, sVars, s).extractParams(sVars));
 		switch (sVars.fmd.direction) {
 		case PARTNERBOTHSIDES:
 			if (sVars.fmd.isSomethingToMyLeft() && sVars.fmd.isSomethingToMyRight())
 				ret.addAll(new PartLocationLocation(sVars).extractParams(sVars));
 			break;
 		case PARTNERTOTHELEFT:
-//				if (sVars.fmd.isSomethingToMyLeft())
-//					ret.addAll(new AttachToFormPair(sVars).extractParams(sVars));
-
 			if (sVars.fmd.isSomethingToMyLeft())
 				if (sVars.fmd.getToMyLeft().obj instanceof Part && sVars.fmd.getSearchTarget().obj instanceof Location)
 					ret.addAll(new AttachToFormPartLocation(sVars).extractParams(sVars));
@@ -364,10 +304,6 @@ public class SearchTarget {
 					ret.addAll(new AttachToFormPair(sVars).extractParams(sVars));
 			break;
 		case PARTNERTOTHERIGHT:
-//				if (sVars.fmd.isSomethingToMyRight())
-//					ret.addAll(new AttachToFormPair(sVars).extractParams(sVars));
-//				break;
-
 			if (sVars.fmd.isSomethingToMyRight())
 				if (sVars.fmd.getSearchTarget().obj instanceof Part && sVars.fmd.getToMyRight().obj instanceof Location)
 					ret.addAll(new AttachToFormPartLocation(sVars).extractParams(sVars));
@@ -403,7 +339,6 @@ public class SearchTarget {
 				return ret;
 			}
 			ret.addAll(obj.doSanityUpdateAddTryAgain(fmd));
-			fmd.resetAllIdAndStrings();
 			throw new EndOfInputException(ret);
 		}
 		return ret;
@@ -460,7 +395,7 @@ public class SearchTarget {
 		return ret;
 	}
 
-	public String setDescendantsQuery(int firstRecordDisplayed) throws Exception {
+	public String setDescendantsQuery() throws Exception {
 		// tables that we've already included in the query
 		Collection<String> tables = new ArrayList<String>();
 		String query = "";
@@ -504,8 +439,27 @@ public class SearchTarget {
 			query += lastJoin(layer, layers.get(layer), thisLevelFileName);
 		}
 		query += insertScoreThreshold(obj);
-		query += insertOrderByAndLimit(obj, IdAndStrings.DISPLAYSIZE, firstRecordDisplayed, SEARCHTYPES.DESCENDANTS);
+		query += insertOrderByAndLimit(obj,
+//				IdAndStrings.DISPLAYSIZE, firstRecordDisplayed, 
+				SEARCHTYPES.DESCENDANTS);
 //		}
+		return query;
+	}
+
+	public String setMyDescendantsQuery() throws Exception {
+		if (!obj.isRecursive())
+			return "";
+		if (!obj.isLoaded())
+			return "";
+		String query = "";
+		MyLinkObject mlo = new MyLinkObject(obj, obj, sVars);
+		query += "SELECT " + mlo.getMyFileName() + ".childId as id";
+		query += ", " + obj.getMyFileName() + ".name";
+		query += " from ";
+		query += obj.getMyFileName() + " ";
+		query += " join " + mlo.getMyFileName() + " on " + mlo.getMyFileName() + ".parentId=" + obj.id;
+		query += " AND " + obj.getMyFileName() + ".id=" + mlo.getMyFileName() + ".childId";
+		query += " ORDER BY " + obj.getMyFileName() + ".name";
 		return query;
 	}
 
@@ -521,7 +475,7 @@ public class SearchTarget {
 	 * @return
 	 * @throws Exception
 	 */
-	public String setAncestorsQuery(int offset) throws Exception {
+	public String setAncestorsQuery() throws Exception {
 //		MyObject obj = fmd.get(fmd.row).get(fmd.column).obj;
 
 		// if the tab is the last in the row, it can not have any ancestors (no children
@@ -570,7 +524,9 @@ public class SearchTarget {
 				query += ")";
 		}
 		query += insertScoreThreshold(obj);
-		query += insertOrderByAndLimit(obj, IdAndStrings.DISPLAYSIZE, offset, SEARCHTYPES.ANCESTORS);
+		query += insertOrderByAndLimit(obj,
+//				IdAndStrings.DISPLAYSIZE, offset, 
+				SEARCHTYPES.ANCESTORS);
 //				fmd.getSearchTarget().getIdAndStrings(SEARCHTYPES.ANCESTORS).getFirstDisplayedRecord());
 		return query;
 	}
@@ -618,14 +574,14 @@ public class SearchTarget {
 	 * @return
 	 * @throws Exception
 	 */
-	String insertOrderByAndLimit(MyObject obj, int limit, int offset, SEARCHTYPES type) throws Exception {
+	String insertOrderByAndLimit(MyObject obj, SEARCHTYPES type) throws Exception {
 		String soFar = "";
 		if (!obj.searchString.isBlank())
 			soFar += " ORDER BY score DESC, name";
 		else
 			soFar += " ORDER BY name";
-		soFar += " LIMIT " + limit;
-		soFar += " OFFSET " + offset;
+//		soFar += " LIMIT " + limit;
+//		soFar += " OFFSET " + offset;
 		return soFar;
 	}
 
@@ -656,7 +612,7 @@ public class SearchTarget {
 	 * @return
 	 * @throws Exception
 	 */
-	public String setAllQuery(int offset) throws Exception {
+	public String setAllQuery() throws Exception {
 //		MyObject obj = fmd.get(fmd.row).get(fmd.column).obj;
 		if (obj.isLoaded()) {
 			return "";
@@ -673,7 +629,9 @@ public class SearchTarget {
 //		query += thisLevelFileName + ".anchorId='" + allAnchor.id + "\')";
 
 		query += insertScoreThreshold(obj);
-		query += insertOrderByAndLimit(obj, IdAndStrings.DISPLAYSIZE, offset, SEARCHTYPES.ALL);
+		query += insertOrderByAndLimit(obj,
+//				IdAndStrings.DISPLAYSIZE,
+				SEARCHTYPES.ALL);
 		return query;
 	}
 
@@ -849,7 +807,7 @@ public class SearchTarget {
 	// the parent is selected, the child is not. show the children of the selected
 	// child
 
-	String listOfChildren(int offset) throws Exception {
+	String listOfChildren() throws Exception {
 		MyObject parent = fmd.getObject();
 		MyObject child = fmd.getToMyRight().obj;
 		MyLinkObject mlo = new MyLinkObject(parent, child, sVars);
@@ -892,31 +850,26 @@ public class SearchTarget {
 		query += linkFileName + ".childId";
 		query += " ORDER BY ";
 		query += linkFileName + ".inventoryDate, " + parentFileName + ".name";
-		query += " LIMIT " + IdAndStrings.DISPLAYSIZE;
-		query += " OFFSET " + offset;
+//		query += " LIMIT " + IdAndStrings.DISPLAYSIZE;
+//		query += " OFFSET " + offset;
 		// return soFar;
 		return query;
 	}
 
-	String listOfChildrenNew(int offset) throws Exception {
+	String listOfChildrenNew() throws Exception {
 		MyObject parent = fmd.getObject();
 		MyObject child = fmd.getToMyRight().obj;
 		MyLinkObject mlo = new MyLinkObject(parent, child, sVars);
 		String linkFileName = mlo.getMyFileName();
-		String parentFileName = parent.getMyFileName();
 		String childFileName = child.getMyFileName();
 		String query = "";
 		query += "SELECT ";
-//		query += parentFileName + "." + "id, name ";
 		query += linkFileName + "." + "id, " + childFileName + ".name ";
 		query += "from ";
 		query += linkFileName + " inner join " + childFileName + " on " + linkFileName + ".parentId=" + parent.id;
 		query += " AND " + childFileName + ".id=" + linkFileName + ".childId";
 		query += " ORDER BY ";
 		query += linkFileName + ".inventoryDate, " + childFileName + ".name";
-		query += " LIMIT " + IdAndStrings.DISPLAYSIZE;
-		query += " OFFSET " + offset;
-		// return soFar;
 		return query;
 	}
 
@@ -928,7 +881,7 @@ public class SearchTarget {
 	 * @return
 	 * @throws Exception
 	 */
-	String listPartsAtLocation(int offset) throws Exception {
+	String listPartsAtLocation() throws Exception {
 		MyObject parent = fmd.getObject();
 		MyObject child = fmd.getToMyRight().obj;
 		if (!(parent instanceof Part))
@@ -966,8 +919,8 @@ public class SearchTarget {
 		query += " join " + childFileName + " on " + childFileName + ".id=" + linkFileName + ".childId";
 		query += " ORDER BY ";
 		query += linkFileName + ".inventoryDate, " + parentFileName + ".name";
-		query += " LIMIT " + IdAndStrings.DISPLAYSIZE;
-		query += " OFFSET " + offset;
+//		query += " LIMIT " + IdAndStrings.DISPLAYSIZE;
+//		query += " OFFSET " + offset;
 		return query;
 	}
 
@@ -978,7 +931,7 @@ public class SearchTarget {
 	 * @return
 	 * @throws Exception
 	 */
-	public String setInventoryLinkQuery(int offset) throws Exception {
+	public String setInventoryLinkQuery() throws Exception {
 		/**
 		 * if there's an entry to the right of this entry AND this entry is a part AND
 		 * the next entry in the row is a location
@@ -994,12 +947,12 @@ public class SearchTarget {
 		if (parent.isLoaded())
 			// either locations containing the selected part or children of the selected
 			// location
-			return listOfChildren(offset);
+			return listOfChildren();
 
 		boolean parentIsPart = parent instanceof Part;
 
 		if (parentIsPart && child.isLoaded())
-			return listPartsAtLocation(offset);
+			return listPartsAtLocation();
 
 		// since the only valid pairs are (part, location) and (location, location), the
 		// child must always be a location. A location can only have one parent.
@@ -1011,7 +964,7 @@ public class SearchTarget {
 			throw new Exception("no inventoryLinkWithChild");
 
 		if (parent.isLoaded())
-			return listOfChildren(offset);
+			return listOfChildren();
 
 		// neither parent nor child are selected. list all inventory links sorted by the
 		// oldest inventory date and then the parent name
@@ -1049,8 +1002,8 @@ public class SearchTarget {
 		query += linkFileName + ".childId";
 		query += " ORDER BY ";
 		query += linkFileName + ".inventoryDate, " + parentFileName + ".name";
-		query += " LIMIT " + IdAndStrings.DISPLAYSIZE;
-		query += " OFFSET " + offset;
+//		query += " LIMIT " + IdAndStrings.DISPLAYSIZE;
+//		query += " OFFSET " + offset;
 		// return soFar;
 		return query;
 //		} else
@@ -1058,20 +1011,22 @@ public class SearchTarget {
 //			return "";
 	}
 
-	public String getQuery(SEARCHTYPES type, int offset) throws Exception {
+	public String getQuery(SEARCHTYPES type) throws Exception {
 		switch (type) {
 		case ALL:
-			return setAllQuery(offset);
+			return setAllQuery();
 		case ANCESTORS:
-			return setAncestorsQuery(offset);
+			return setAncestorsQuery();
 		case DESCENDANTS:
-			return setDescendantsQuery(offset);
+			return setDescendantsQuery();
 //		case INVENTORY:
 //			return setInventoryQuery(offset);
 		case INVENTORYLINKS:
-			return setInventoryLinkQuery(offset);
+			return setInventoryLinkQuery();
 //		case ORPHANS:
 //			return setOrphanQuery(offset);
+		case MYDESCENDANTS:
+			return setMyDescendantsQuery();
 		}
 		return "fer shure";
 	}

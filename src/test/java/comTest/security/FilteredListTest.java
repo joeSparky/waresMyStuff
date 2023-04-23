@@ -61,7 +61,7 @@ public class FilteredListTest {
 		}
 		FormsMatrixDynamic fmd = null;
 		SearchTargets objs = new SearchTargets(sVars);
-		objs.initResults();
+//		objs.initResults();
 		try {
 			fmd = new FormsMatrixDynamic(sVars);
 			fmd.row = 0;
@@ -70,7 +70,7 @@ public class FilteredListTest {
 			objs.add(levelTwo, SearchTarget.EDITSELECTTYPE.EDITANDSELECT);
 			objs.add(levelThree, SearchTarget.EDITSELECTTYPE.EDITANDSELECT);
 			fmd.add(objs);
-			objs.get(0).setDescendantsQuery(0);
+			objs.get(0).setDescendantsQuery();
 			// get the ancestors of levelThree into levelOne
 			levelOne.clear();
 			// let levelTwo be an ancestor of levelThree
@@ -78,9 +78,9 @@ public class FilteredListTest {
 			levelTwo.searchString = "dkkasd fjasd eve";
 			// load up levelThree again so levelTwo can be its ancestor
 			levelThree.find(levelThreeId);
-			objs.get(0).setAncestorsQuery(0);
-			objs.get(0).setDescendantsQuery(0);
-			objs.get(0).setInventoryLinkQuery(0);
+			objs.get(0).setAncestorsQuery();
+			objs.get(0).setDescendantsQuery();
+			objs.get(0).setInventoryLinkQuery();
 //			objs.get(0).setInventoryQuery(0);
 		} catch (Exception e) {
 			for (StackTraceElement s : e.getStackTrace()) {
@@ -97,7 +97,7 @@ public class FilteredListTest {
 		Location location = null;
 		FormsMatrixDynamic fmd = null;
 		SearchTargets objs = new SearchTargets(sVars);
-		objs.initResults();
+//		objs.initResults();
 		try {
 			part = new Part(sVars);
 			location = new Location(sVars);
@@ -107,7 +107,7 @@ public class FilteredListTest {
 			objs.add(part, SearchTarget.EDITSELECTTYPE.EDITANDSELECT);
 			objs.add(location, SearchTarget.EDITSELECTTYPE.EDITANDSELECT);
 			fmd.add(objs);
-			String str = objs.get(0).setInventoryLinkQuery(0);
+			String str = objs.get(0).setInventoryLinkQuery();
 			System.out.println(str);
 //			partLink = new PartLink(part, location, sVars);
 		} catch (Exception e) {
@@ -123,7 +123,7 @@ public class FilteredListTest {
 		Location location = null;
 		FormsMatrixDynamic fmd = null;
 		SearchTargets objs = new SearchTargets(sVars);
-		objs.initResults();
+//		objs.initResults();
 		try {
 			part = new Part(sVars);
 			location = new Location(sVars);
@@ -134,7 +134,7 @@ public class FilteredListTest {
 			objs.add(part, SearchTarget.EDITSELECTTYPE.EDITANDSELECT);
 			objs.add(location, SearchTarget.EDITSELECTTYPE.EDITANDSELECT);
 			fmd.add(objs);
-			String str = objs.get(0).setInventoryLinkQuery(0);
+			String str = objs.get(0).setInventoryLinkQuery();
 			System.out.println(str);
 //				partLink = new PartLink(part, location, sVars);
 		} catch (Exception e) {
@@ -150,7 +150,7 @@ public class FilteredListTest {
 		Location location = null;
 		FormsMatrixDynamic fmd = null;
 		SearchTargets objs = new SearchTargets(sVars);
-		objs.initResults();
+//		objs.initResults();
 		try {
 			part = new Part(sVars);
 			part.id = 31;
@@ -161,7 +161,7 @@ public class FilteredListTest {
 			objs.add(part, SearchTarget.EDITSELECTTYPE.EDITANDSELECT);
 			objs.add(location, SearchTarget.EDITSELECTTYPE.EDITANDSELECT);
 			fmd.add(objs);
-			String str = objs.get(0).setInventoryLinkQuery(0);
+			String str = objs.get(0).setInventoryLinkQuery();
 			System.out.println(str);
 //						partLink = new PartLink(part, location, sVars);
 		} catch (Exception e) {
@@ -177,7 +177,7 @@ public class FilteredListTest {
 		Location childLocation = null;
 		FormsMatrixDynamic fmd = null;
 		SearchTargets objs = new SearchTargets(sVars);
-		objs.initResults();
+//		objs.initResults();
 		try {
 			parentLocation = new Location(sVars);
 			childLocation = new Location(sVars);
@@ -187,7 +187,7 @@ public class FilteredListTest {
 			objs.add(parentLocation, SearchTarget.EDITSELECTTYPE.EDITANDSELECT);
 			objs.add(childLocation, SearchTarget.EDITSELECTTYPE.EDITANDSELECT);
 			fmd.add(objs);
-			String str = objs.get(0).setInventoryLinkQuery(0);
+			String str = objs.get(0).setInventoryLinkQuery();
 			System.out.println(str);
 //				partLink = new PartLink(part, location, sVars);
 		} catch (Exception e) {
@@ -215,7 +215,7 @@ public class FilteredListTest {
 				for (SEARCHTYPES type : SEARCHTYPES.values()) {
 					try {
 						System.out.println("type:" + type.toString() + " filteredList:" + tmpFilteredList + "\nquery:"
-								+ tmpFilteredList.getQuery(type, 0));
+								+ tmpFilteredList.getQuery(type));
 					} catch (Exception e) {
 						System.out.print(e.getStackTrace());
 						fail(e.getLocalizedMessage());

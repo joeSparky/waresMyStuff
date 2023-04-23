@@ -101,10 +101,10 @@ public class SearchTargetsTest {
 
 		IdAndStrings idAndStrings = null;
 		try {
-			idAndStrings = new IdAndStrings(formsMatrixDynamic, SearchTarget.SEARCHTYPES.DESCENDANTS, sVars);
+			idAndStrings = new IdAndStrings(formsMatrixDynamic, sVars, SearchTarget.SEARCHTYPES.DESCENDANTS);
 //			idAndStrings.displayState = IdAndStrings.DISPLAYSTATE.ATBEGINNINGWITHOUTASEARCH;
 //			idAndStrings.direction = IdAndStrings.DIRECTION.FORWARD;
-			idAndStrings.doQuery(true);
+			idAndStrings.doQuery();
 		} catch (Exception e) {
 			for (StackTraceElement ele : e.getStackTrace()) {
 				System.out.println(ele);
@@ -125,7 +125,7 @@ public class SearchTargetsTest {
 
 		// should have 5 bubbas
 		try {
-			idAndStrings.doQuery(true);
+			idAndStrings.doQuery();
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
@@ -205,13 +205,13 @@ public class SearchTargetsTest {
 		// search string not set to find the bubbas
 		IdAndStrings idAndStrings = null;
 		try {
-			idAndStrings = new IdAndStrings(fmd, SearchTarget.SEARCHTYPES.DESCENDANTS, sVars);
+			idAndStrings = new IdAndStrings(fmd, sVars, SearchTarget.SEARCHTYPES.DESCENDANTS);
 			// make the display size a non-issue
 			IdAndStrings.DISPLAYSIZE = 99999;
 //			idAndStrings.displayState = IdAndStrings.DISPLAYSTATE.ATBEGINNINGWITHOUTASEARCH;
 //			idAndStrings.direction = IdAndStrings.DIRECTION.FORWARD;
 //			idAndStrings.firstDisplayedRecord = -1;
-			idAndStrings.doQuery(true);
+			idAndStrings.doQuery();
 		} catch (Exception e) {
 			for (StackTraceElement ste : e.getStackTrace()) {
 				System.out.println(ste);
@@ -232,11 +232,11 @@ public class SearchTargetsTest {
 
 		// should have 5 "bubba"s and 7 "bubba gump"s
 		try {
-			idAndStrings = new IdAndStrings(fmd, SearchTarget.SEARCHTYPES.DESCENDANTS, sVars);
+			idAndStrings = new IdAndStrings(fmd, sVars, SearchTarget.SEARCHTYPES.DESCENDANTS);
 //			idAndStrings.displayState = IdAndStrings.DISPLAYSTATE.ATBEGINNINGWITHOUTASEARCH;
 //			idAndStrings.direction = IdAndStrings.DIRECTION.FORWARD;
 //			idAndStrings.firstDisplayedRecord = -1;
-			idAndStrings.doQuery(true);
+			idAndStrings.doQuery();
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}

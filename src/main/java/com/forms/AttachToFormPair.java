@@ -1,8 +1,6 @@
 package com.forms;
 
 import com.db.SessionVars;
-import com.parts.inOut.Part;
-import com.parts.location.Location;
 import com.security.ExceptionCoding;
 
 /**
@@ -133,14 +131,12 @@ public class AttachToFormPair extends SmartForm {
 		LeftAndRight leftAndRight = new LeftAndRight(sVars);
 		if (sVars.hasParameterKey(buttonLinkChild + "_" + leftAndRight.left.obj.id + "_" + leftAndRight.right.obj.id)) {
 			leftAndRight.left.obj.addChild(leftAndRight.right.obj);
-			sVars.fmd.resetAllIdAndStrings();
 			throw new EndOfInputRedoQueries(ret);
 		}
 
 		if (sVars.hasParameterKey(
 				buttonUnlinkChild + "_" + leftAndRight.left.obj.id + "_" + leftAndRight.right.obj.id)) {
 			leftAndRight.left.obj.deleteLinkUnconditionally(leftAndRight.right.obj);
-			sVars.fmd.resetAllIdAndStrings();
 			throw new EndOfInputRedoQueries(ret);
 		}
 		return ret;

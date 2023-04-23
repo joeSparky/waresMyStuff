@@ -13,7 +13,6 @@ import com.db.MyStatement;
 import com.db.SessionVars;
 import com.forms.SearchTarget.SEARCHTYPES;
 import com.parts.security.InventoryDate;
-import com.parts.security.PartLink;
 import com.security.MyObject;
 
 public class IdAndStrings extends ArrayList<IdAndString> {
@@ -23,29 +22,29 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 	 */
 	private static final long serialVersionUID = 8594003232659591066L;
 
-	public SearchOffset so = null;
+//	public SearchOffset so = null;
 
-	public enum OPERATORINPUT {
-		NEXT, PREVIOUS, WANTSALIST, CANCELLIST
-	}
+//	public enum OPERATORINPUT {
+//		NEXT, PREVIOUS, WANTSALIST, CANCELLIST
+//	}
 
 	SessionVars sVars = null;
 
-	public enum DIRECTION {
-		UNKNOWN, FORWARD, REVERSE
-	};
+//	public enum DIRECTION {
+//		UNKNOWN, FORWARD, REVERSE
+//	};
 
 	/**
 	 * the user is moving the search window. update the search offset when true.
 	 */
-	boolean moveSearch = false;
+//	boolean moveSearch = false;
 
 	// public for testing
 //	public DISPLAYSTATE displayState = DISPLAYSTATE.SHOWGIVEMEALISTBUTTON;
 	/**
 	 * direction of the last submit key. NEXT -> forward, PREVIOUS -> reverse
 	 */
-	public DIRECTION direction = DIRECTION.FORWARD;
+//	public DIRECTION direction = DIRECTION.FORWARD;
 
 	/**
 	 * The number of records to display with each request.
@@ -55,39 +54,26 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 	FormsMatrixDynamic fm = null;
 	SEARCHTYPES searchType = null;
 
-	public IdAndStrings(FormsMatrixDynamic fm, SEARCHTYPES s, SessionVars sVars) {
+	public IdAndStrings(FormsMatrixDynamic fm, SessionVars sVars, SEARCHTYPES s) {
 		this.fm = fm;
 		this.sVars = sVars;
 		this.searchType = s;
 		clear();
 	}
 
-	public class MyVars extends com.forms.MyVars {
-		public String CANCELLIST = IdAndStrings.class.getCanonicalName() + searchType.toString() + "a";
-		public String SELECTFROMLIST = IdAndStrings.class.getCanonicalName() + searchType.toString() + "b";
-		public String NEXT = IdAndStrings.class.getCanonicalName() + searchType.toString() + "c";
-		public String PREVIOUS = IdAndStrings.class.getCanonicalName() + searchType.toString() + "d";
-		public String REQUESTALIST = IdAndStrings.class.getCanonicalName() + searchType.toString() + "e";
-		public String INVENTORYFROMLIST = IdAndStrings.class.getCanonicalName() + searchType.toString() + "f";
-		public String SELECTFROMINVENTORYLIST = IdAndStrings.class.getCanonicalName() + searchType.toString() + "g";
+	enum MYBUTTONS {
+		/**
+		 * the id returned by the browser is the id of an object.
+		 */
+		IDISANOBJECT,
+		/**
+		 * the id returned by the browser is the id of a link between two objects.
+		 */
+		IDISALINK
+	};
 
-		public MyVars(SessionVars sVars) throws Exception {
-			super(sVars, IdAndStrings.class.getCanonicalName() + "-" + searchType.toString());
-		}
-//		public String getMyVarsName(SessionVars sVars) {
-//			return super.getMyVarsName(sVars)+"_"+searchType.toString();
-//		}
-	}
-
-	@Override
-	public void clear() {
-		moveSearch = false;
-		direction = DIRECTION.FORWARD;
-		if (so == null)
-			so = new SearchOffset();
-		else
-			so.clear();
-		super.clear();
+	String myButtonString(MYBUTTONS myButton, SearchTarget.SEARCHTYPES searchType) {
+		return IdAndStrings.class.getCanonicalName() + searchType.toString() + myButton.ordinal();
 	}
 
 	public boolean contains(IdAndString idAndString) {
@@ -106,15 +92,16 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 		return false;
 	}
 
-	public IdAndStrings doQuery(boolean moveAfterSearch) throws Exception {
+	public IdAndStrings doQuery(
+//			SearchTarget.SEARCHTYPES searchType
+			) throws Exception {
 		super.clear();
-		String myQuery = fm.get(fm.row).get(fm.column).getQuery(searchType, so.getOffset(direction, moveAfterSearch));
+		String myQuery = fm.get(fm.row).get(fm.column).getQuery(searchType);
 		if (myQuery.isEmpty())
 			return this;
 		Connection conn = null;
 		MyStatement st = null;
 		ResultSet rs = null;
-		int recordsFound = 0;
 		try {
 			conn = sVars.connection.getConnection();
 			st = new MyStatement(conn);
@@ -125,7 +112,6 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 				tmp.string = rs.getString("name");
 				tmp.id = rs.getInt("id");
 				add(tmp);
-				recordsFound++;
 			}
 		} finally {
 			if (rs != null)
@@ -135,7 +121,7 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 			if (conn != null)
 				conn.close();
 		}
-		so.storeLastSearchResults(direction, recordsFound);
+//		so.storeLastSearchResults(recordsFound);
 		return this;
 	}
 
@@ -205,53 +191,35 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 
 	public FormsArray extractParams(SessionVars sVars) throws Exception {
 		FormsArray ret = new FormsArray();
-		MyVars myVars = (MyVars) new MyVars(sVars).get();
-		if (sVars.hasParameterKey(myVars.CANCELLIST)) {
-			processOperatorInput(OPERATORINPUT.CANCELLIST);
-			throw new EndOfInputRedoQueries(ret);
-		}
-		if (sVars.hasParameterKey(myVars.NEXT + searchType)) {
-			processOperatorInput(OPERATORINPUT.NEXT);
-			throw new EndOfInputRedoQueries(ret);
-		}
-		if (sVars.hasParameterKey(myVars.PREVIOUS + searchType)) {
-			processOperatorInput(OPERATORINPUT.PREVIOUS);
-			throw new EndOfInputRedoQueries(ret);
-		}
-		if (sVars.hasParameterKey(myVars.REQUESTALIST)) {
-			processOperatorInput(OPERATORINPUT.WANTSALIST);
-			throw new EndOfInputRedoQueries(ret);
-		}
-		if (sVars.getParameterKeys().contains(myVars.SELECTFROMLIST)) {
+		if (sVars.getParameterKeys().contains(myButtonString(MYBUTTONS.IDISANOBJECT, searchType))) {
 			int id = -1;
 			try {
-				id = Integer.parseInt(sVars.getParameterValue(myVars.SELECTFROMLIST));
+				id = Integer.parseInt(sVars.getParameterValue(myButtonString(MYBUTTONS.IDISANOBJECT, searchType)));
 			} catch (Exception e) {
 				ret.errorToUser("Please make a selection before clicking the Select button");
 				throw new EndOfInputException(ret);
 			}
 			MyObject obj = fm.getObject();
 			obj.find(id);
-			fm.resetAllIdAndStrings();
 			throw new EndOfInputRedoQueries(ret);
 		}
 
-		if (sVars.getParameterKeys().contains(myVars.SELECTFROMINVENTORYLIST)) {
+		if (sVars.getParameterKeys().contains(myButtonString(MYBUTTONS.IDISALINK, searchType))) {
 			int id = -1;
 			try {
 				// get the id of the inventory link
-				id = Integer.parseInt(sVars.getParameterValue(myVars.SELECTFROMINVENTORYLIST));
+				id = Integer.parseInt(sVars.getParameterValue(myButtonString(MYBUTTONS.IDISALINK, searchType)));
 			} catch (Exception e) {
 				ret.errorToUser("Please make a selection before clicking the Select button");
 				throw new EndOfInputException(ret);
 			}
+			// we have the id of the link, but not which set of links the id belongs to.
 			MyObject parent = fm.getObject().getNew();
 			MyObject child = fm.getObjectBelowMeInRow().getNew();
 			InventoryDate inventoryDate = new InventoryDate(parent, child, sVars);
 			inventoryDate.find(id);
 			inventoryDate.setInventoried(true);
 			inventoryDate.update();
-//			fm.resetAllIdAndStrings();
 			throw new EndOfInputRedoQueries(ret);
 		}
 
@@ -260,7 +228,7 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 
 	public FormsArray getForm(SessionVars sVars) throws Exception {
 		FormsArray ret = new FormsArray();
-		MyVars myVars = (MyVars) new MyVars(sVars).get();
+//		MyVars myVars = (MyVars) new MyVars(sVars).get();
 //		if (fm.getObject().isLoaded())
 //			return ret;
 		// if the object does not have an inventory field
@@ -272,7 +240,10 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 			if (!fm.getObject().hasInventoryLinkWith(fm.getObjectBelowMeInRow()))
 				return ret;
 		}
-		doQuery(moveSearch);
+//		addAll(doQuery(searchType));
+		doQuery(
+//				searchType
+				);
 		if (isEmpty()) {
 			if (!fm.getObject().searchString.isEmpty()) {
 				ret.rawText("Nothing found in " + SearchTarget.getIdAndStringLabels(searchType) + " list with "
@@ -283,7 +254,7 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 			ret.startTable();
 			ret.startRow();
 			ret.startBold();
-			ret.spanTextColumn(SearchTarget.getIdAndStringLabels(searchType) + " list", 2);
+			ret.rawText(setTopOfList(searchType));
 			ret.endBold();
 			ret.endRow();
 			ret.startRow();
@@ -291,20 +262,18 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 			case ALL:
 			case ANCESTORS:
 			case DESCENDANTS:
+			case MYDESCENDANTS:
 				// allow room for the "no selection" option
-				ret.startSingleSelection(myVars.SELECTFROMLIST, Math.min(DISPLAYSIZE + 1, this.size() + 1), false);
+				ret.startSingleSelection(myButtonString(MYBUTTONS.IDISANOBJECT, searchType),
+						Math.min(DISPLAYSIZE + 1, this.size() + 1), false);
 				break;
-//			case INVENTORY:
-//				ret.startSingleSelection(myVars.INVENTORYFROMLIST, Math.min(DISPLAYSIZE + 1, this.size() + 1), false);
-//				break;
 			case INVENTORYLINKS:
-				ret.startSingleSelection(myVars.SELECTFROMINVENTORYLIST, Math.min(DISPLAYSIZE + 1, this.size() + 1),
-						false);
-				break;
-			default:
+				ret.startSingleSelection(myButtonString(MYBUTTONS.IDISALINK, searchType),
+						Math.min(DISPLAYSIZE + 1, this.size() + 1), false);
 				break;
 			}
-			ret.addNoSelectionOption();
+
+			ret.addNoSelectionOption(setTopOfList(searchType));
 			IdAndString tmp = new IdAndString();
 			Iterator<IdAndString> itr = iterator();
 			while (itr.hasNext()) {
@@ -317,59 +286,67 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 			case ALL:
 			case ANCESTORS:
 			case DESCENDANTS:
+			case MYDESCENDANTS:
 				ret.submitButton("Submit selected object from " + SearchTarget.getIdAndStringLabels(searchType),
-						myVars.SELECTFROMLIST);
+						myButtonString(MYBUTTONS.IDISANOBJECT, searchType));
 				break;
-//			case INVENTORY:
-//				ret.submitButton("Mark as inventoried " + searchType.toString(), myVars.INVENTORYFROMLIST);
-//				break;
 			case INVENTORYLINKS:
 				if (fm.getObjectBelowMeInRow().isLoaded())
-					ret.submitButton("Mark as inventoried " + searchType.toString(), myVars.SELECTFROMINVENTORYLIST);
+					ret.submitButton("Mark as inventoried " + searchType.toString(),
+							myButtonString(MYBUTTONS.IDISALINK, searchType));
 				else
 					ret.submitButton("Submit selected object from " + SearchTarget.getIdAndStringLabels(searchType),
-							myVars.SELECTFROMINVENTORYLIST);
+							myButtonString(MYBUTTONS.IDISALINK, searchType));
 				break;
 			}
-			if (so.showNextButton())
-				ret.addAll(nextButton(myVars));
-			if (so.showPreviousButton())
-				ret.addAll(previousButton(myVars));
 		}
 		return ret;
 	}
 
-	FormsArray nextButton(MyVars myVars) {
-		FormsArray ret = new FormsArray();
-		ret.submitButton("Next " + DISPLAYSIZE + " objects from " + SearchTarget.getIdAndStringLabels(searchType),
-				myVars.NEXT + searchType);
-		return ret;
-	}
-
-	FormsArray previousButton(MyVars myVars) {
-		FormsArray ret = new FormsArray();
-		ret.submitButton("Previous " + DISPLAYSIZE + " objects from " + SearchTarget.getIdAndStringLabels(searchType),
-				myVars.PREVIOUS + searchType);
-		return ret;
-	}
-
-	public void processOperatorInput(OPERATORINPUT input) {
-		switch (input) {
-		case CANCELLIST:
-			moveSearch = false;
-			break;
-		case NEXT:
-			// no NEXT button is offered to the user if the records have been exhausted
-			direction = DIRECTION.FORWARD;
-			moveSearch = true;
-			break;
-		case PREVIOUS:
-			direction = DIRECTION.REVERSE;
-			moveSearch = true;
-			break;
-		case WANTSALIST:
-			moveSearch = false;
-			break;
+	String setTopOfList(SEARCHTYPES searchType) {
+		switch (searchType) {
+		case ALL:
+		case ANCESTORS:
+		case INVENTORYLINKS:
+			return SearchTarget.getIdAndStringLabels(searchType);
+		case DESCENDANTS:
+		case MYDESCENDANTS:
+			return ("Contents of " + fm.getObject().getInstanceName());
 		}
+		return "";
 	}
+
+//	FormsArray nextButton(SearchTarget.SEARCHTYPES searchType) {
+//		FormsArray ret = new FormsArray();
+//		ret.submitButton("Next " + DISPLAYSIZE + " objects from " + SearchTarget.getIdAndStringLabels(searchType),
+//				myButtonString(MYBUTTONS.NEXT, searchType));
+//		return ret;
+//	}
+
+//	FormsArray previousButton(SearchTarget.SEARCHTYPES searchType) {
+//		FormsArray ret = new FormsArray();
+//		ret.submitButton("Previous " + DISPLAYSIZE + " objects from " + SearchTarget.getIdAndStringLabels(searchType),
+//				myButtonString(MYBUTTONS.PREVIOUS, searchType));
+//		return ret;
+//	}
+
+//	public void processOperatorInput(OPERATORINPUT input) {
+//		switch (input) {
+//		case CANCELLIST:
+//			moveSearch = false;
+//			break;
+//		case NEXT:
+//			// no NEXT button is offered to the user if the records have been exhausted
+//			direction = DIRECTION.FORWARD;
+//			moveSearch = true;
+//			break;
+//		case PREVIOUS:
+//			direction = DIRECTION.REVERSE;
+//			moveSearch = true;
+//			break;
+//		case WANTSALIST:
+//			moveSearch = false;
+//			break;
+//		}
+//	}
 }

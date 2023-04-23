@@ -317,6 +317,11 @@ public class FormsArray {
 		body += "<option disabled selected value> -- select an option --";
 		body += "</option>";
 	}
+	
+	public void addNoSelectionOption(String text) {
+		body += "<option disabled selected value>"+text;
+		body += "</option>";
+	}
 
 	public void addMultiSelectionOption(String value, String label, boolean checked) {
 		body += "<option ";
