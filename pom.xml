@@ -8,8 +8,10 @@
   <description>warehouse inventory management</description>
   <packaging>war</packaging>
   <properties>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <!-- <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target> -->
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
 <dependencies>
@@ -54,7 +56,7 @@
 </dependencies>
 <build>
 <plugins>
-  <plugin>
+  <!-- <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-war-plugin</artifactId>
     <version>3.3.2</version>
@@ -65,6 +67,21 @@
   <plugin>
     <artifactId>maven-war-plugin</artifactId>
     <configuration>
+        <attachClasses>true</attachClasses>
+        <webResources>
+            <resource>
+                <directory>src/main/webapp</directory>
+                <filtering>true</filtering>
+            </resource>
+        </webResources>
+    </configuration>
+  </plugin>-->
+  <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-war-plugin</artifactId>
+    <version>3.3.2</version>
+    <configuration>      
+      <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
         <attachClasses>true</attachClasses>
         <!-- <webXml>target/web.xml</webXml> -->
         <webResources>
