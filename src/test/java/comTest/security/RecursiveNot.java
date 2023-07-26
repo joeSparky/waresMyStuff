@@ -5,6 +5,9 @@ import java.lang.invoke.MethodHandles;
 import com.db.SessionVars;
 import com.security.MyObject;
 
+/**
+ * create a non-recursive object
+ */
 public class RecursiveNot extends Recurse{
 	public RecursiveNot(SessionVars sVars) throws Exception {
 		super(sVars);

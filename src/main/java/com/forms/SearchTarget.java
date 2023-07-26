@@ -721,7 +721,7 @@ public class SearchTarget {
 
 	public String setOrphanQuery() throws Exception {
 		// only recursive objects can be orphans
-		if (!obj.isRecursive())
+		if (!obj.isRecursive() || obj.isLoaded())
 			return "";
 		String linkFileName = new MyLinkObject(obj, obj, sVars).getMyFileName();
 		String myFileName = obj.getMyFileName();

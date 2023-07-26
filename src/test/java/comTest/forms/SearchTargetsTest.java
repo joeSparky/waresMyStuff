@@ -15,6 +15,7 @@ import com.parts.location.Location;
 
 import comTest.security.Level1;
 import comTest.security.Level2;
+import comTest.security.RecursiveNot;
 import comTest.utilities.Utilities;
 
 public class SearchTargetsTest {
@@ -246,8 +247,10 @@ public class SearchTargetsTest {
 			fail("expected size of 12, got " + idAndStrings.size());
 
 	}
+
+	// location not loaded, check for correct query
 	@Test
-	public void orphanTest() {
+	public void orphanTestNormal() {
 		// create an orphan location
 		Location location = null;
 		SearchTarget searchTarget = null;
@@ -258,7 +261,56 @@ public class SearchTargetsTest {
 			query += searchTarget.setOrphanQuery();
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
-		}		
-		System.out.println("orphan query is "+query);
+		}
+		String expected = "SELECT location.id, location.name ";
+		expected += "FROM location WHERE location.id NOT IN ";
+		expected += "(SELECT childId from locationqxchildqxlocation)";
+		if (!query.equals(expected)) {
+			System.out.println(query);
+			fail("expected '" + expected + "', received '" + query + "'");
+		}
+	}
+
+	// location loaded, look for empty query
+	@Test
+	public void orphanTestUnloaded() {
+		// create an orphan location
+		Location location = null;
+		SearchTarget searchTarget = null;
+		String query = "";
+		try {
+			location = new Location(sVars);
+			location.add();
+			searchTarget = new SearchTarget(location, sVars);
+			query += searchTarget.setOrphanQuery();
+		} catch (Exception e) {
+			fail(e.getLocalizedMessage());
+		}
+		String expected = "";
+		if (!query.equals(expected)) {
+			System.out.println(query);
+			fail("expected '" + expected + "', received '" + query + "'");
+		}
+	}
+
+	// non-recursive object
+	@Test
+	public void orphanTestNonRecursive() {
+		// create a non-recursive object
+		RecursiveNot recursiveNot = null;
+		SearchTarget searchTarget = null;
+		String query = "";
+		try {
+			recursiveNot = new RecursiveNot(sVars);
+			searchTarget = new SearchTarget(recursiveNot, sVars);
+			query += searchTarget.setOrphanQuery();
+		} catch (Exception e) {
+			fail(e.getLocalizedMessage());
+		}
+		String expected = "";
+		if (!query.equals(expected)) {
+			System.out.println(query);
+			fail("expected '" + expected + "', received '" + query + "'");
+		}
 	}
 }
