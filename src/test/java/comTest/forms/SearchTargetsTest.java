@@ -11,6 +11,8 @@ import com.forms.FormsMatrixDynamic;
 import com.forms.IdAndStrings;
 import com.forms.SearchTarget;
 import com.forms.SearchTargets;
+import com.parts.location.Location;
+
 import comTest.security.Level1;
 import comTest.security.Level2;
 import comTest.utilities.Utilities;
@@ -142,7 +144,7 @@ public class SearchTargetsTest {
 		// "bubba gump"s.
 		Level1 levelOne = null;
 
-		FormsMatrixDynamic fmd =null; 
+		FormsMatrixDynamic fmd = null;
 
 		try {
 			fmd = new FormsMatrixDynamic(sVars);
@@ -243,5 +245,20 @@ public class SearchTargetsTest {
 		if (idAndStrings.size() != 12)
 			fail("expected size of 12, got " + idAndStrings.size());
 
+	}
+	@Test
+	public void orphanTest() {
+		// create an orphan location
+		Location location = null;
+		SearchTarget searchTarget = null;
+		String query = "";
+		try {
+			location = new Location(sVars);
+			searchTarget = new SearchTarget(location, sVars);
+			query += searchTarget.setOrphanQuery();
+		} catch (Exception e) {
+			fail(e.getLocalizedMessage());
+		}		
+		System.out.println("orphan query is "+query);
 	}
 }

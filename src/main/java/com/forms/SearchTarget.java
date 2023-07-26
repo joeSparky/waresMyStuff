@@ -53,7 +53,7 @@ public class SearchTarget {
 	public enum SEARCHTYPES {
 		ALL, DESCENDANTS,
 //		INVENTORY, 
-		INVENTORYLINKS, ANCESTORS, MYDESCENDANTS
+		INVENTORYLINKS, ANCESTORS, MYDESCENDANTS, ORPHANS
 	}
 
 	public static String getIdAndStringLabels(SEARCHTYPES types) {
@@ -70,6 +70,8 @@ public class SearchTarget {
 			return "Inventory Links";
 		case MYDESCENDANTS:
 			return "My Descendants";
+		case ORPHANS:
+			return "Orphans";
 		}
 		return null;
 	}
@@ -717,6 +719,20 @@ public class SearchTarget {
 //
 //	}
 
+	public String setOrphanQuery() throws Exception {
+		// only recursive objects can be orphans
+		if (!obj.isRecursive())
+			return "";
+		String linkFileName = new MyLinkObject(obj, obj, sVars).getMyFileName();
+		String myFileName = obj.getMyFileName();
+		String myId = myFileName + ".id";
+		String myName = myFileName + ".name";
+		String query = "SELECT " + myId + ", " + myName + " FROM " + myFileName + " WHERE " + myId + " NOT IN ";
+		query += "(";
+		query += "SELECT childId from " + linkFileName;
+		query += ")";
+		return query;
+	}
 //	public String setOrphanQuery(int offset) throws Exception {
 //
 ////		MyObject obj = fmd.get(fmd.row).get(fmd.column).obj;
@@ -1027,6 +1043,8 @@ public class SearchTarget {
 //			return setOrphanQuery(offset);
 		case MYDESCENDANTS:
 			return setMyDescendantsQuery();
+		case ORPHANS:
+			return setOrphanQuery();
 		}
 		return "fer shure";
 	}

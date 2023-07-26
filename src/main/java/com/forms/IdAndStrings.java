@@ -263,6 +263,7 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 			case ANCESTORS:
 			case DESCENDANTS:
 			case MYDESCENDANTS:
+			case ORPHANS:
 				// allow room for the "no selection" option
 				ret.startSingleSelection(myButtonString(MYBUTTONS.IDISANOBJECT, searchType),
 						Math.min(DISPLAYSIZE + 1, this.size() + 1), false);
@@ -287,6 +288,7 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 			case ANCESTORS:
 			case DESCENDANTS:
 			case MYDESCENDANTS:
+			case ORPHANS:
 				ret.submitButton("Submit selected object from " + SearchTarget.getIdAndStringLabels(searchType),
 						myButtonString(MYBUTTONS.IDISANOBJECT, searchType));
 				break;
@@ -308,6 +310,7 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 		case ALL:
 		case ANCESTORS:
 		case INVENTORYLINKS:
+		case ORPHANS:
 			return SearchTarget.getIdAndStringLabels(searchType);
 		case DESCENDANTS:
 		case MYDESCENDANTS:
