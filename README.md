@@ -1,4 +1,4 @@
-#Overview
+# Overview
 WaresMyStuff is a minimal warehouse inventory management program. It tracks names of parts, quantity of parts, part's locations, and when a part or location was last inventoried. WaresMyStuff uses Apache Tomcat for the User Interface and MySql as a database. Java is the programming language.
 
 Locations use a tree structure so a location can contain other locations (as well as parts).
