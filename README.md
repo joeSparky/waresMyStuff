@@ -1,0 +1,1 @@
+WaresMyStuff is a minimal warehouse inventory management program. It tracks names of parts, quantity of parts, and parts locations. Locations use a tree structure so a location can contain other locations (as well as parts).
