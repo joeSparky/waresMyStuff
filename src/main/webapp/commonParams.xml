@@ -17,9 +17,9 @@ csvPath)>
 <params>
 	<loginForm>com.parts.security.Login</loginForm>
 	<dispatchForm>com.parts.security.Dispatch</dispatchForm>
-	<dbName>shop</dbName>
-	<dbUser>root</dbUser>
-	<dbPassword>y2schaum</dbPassword>
+	<dbName>waresdb</dbName>
+	<dbUser>waresUser</dbUser>
+	<dbPassword>waresPassword</dbPassword>
 	<dUserName>ferSure</dUserName>
 	<dPassword>ferSure</dPassword>
 	<dCompany>commonCompany</dCompany>

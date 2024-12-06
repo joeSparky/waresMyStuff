@@ -1,0 +1,55 @@
+Install Visual Studio SQL Data Tools and Visual Studio .NET framework (https://visualstudio.microsoft.com/)
+
+Install mySql database (MySQL.com)
+- Typical MySQL installation, Check the "Run MySQL Configurator" box before clicking "Finish"
+-- Enter the MySQL root password for your records. WaresMyStuff does not need the root password.
+-- Create a user "waresUser"
+-- Enter user password "waresPassword"
+-- create user role "database manager"
+
+-- Create a user "testUser"
+-- enter password for testUser: "testPassword"
+-- create a user role for testUser: "database manager"
+
+--- mysql: CREATE DATABASE waresdb;
+--- mysql: CREATE DATABASE testdb;
+
+//--- mysql: CREATE USER 'testUser'@'localhost';
+--- mysql: GRANT ALL PRIVILEGES ON testdb.* TO 'testUser'@'localhost';
+//--- mysql: SET PASSWORD FOR 'testUser'@'localhost' = 'testPassword';
+
+//--- mysql: CREATE USER 'testUser'@'localhost';
+--- mysql: GRANT ALL PRIVILEGES ON waresdb.* TO 'waresUser'@'localhost';
+//--- mysql: SET PASSWORD FOR 'waresUser'@'localhost' = 'waresPassword';
+
+--- mysql: FLUSH PRIVILEGES;
+
+-- configure as a windows service
+-- standard system account
+-- select yes to grant full access
+-- no sample databases
+
+Install apache tomcat
+tomcat.apache.org, download tomcat11, windows service installer
+- check the "tomcat", "Start Menu Items", "Manager", "Host Manager" boxes
+- Record the tomcat installation directory. Parameters file changed later c:\users\Apache Tomcat\
+- Tomcat Administrator Login user name 'admin', password 'password'
+- select the JRE directory on your machine
+- test with URL of localhost:8080, see the Apache Tomcat home page
+- test with URL localhost:8080/manager, login with the above user name and password
+
+Modify waresMyStuff/src/main/webapp/commonParams.xml file
+- <dbUser>waresUser</dbUser>
+- <dbPassword>waresPassword</dbPassword>
+- <dbName>waresdb</dbName>
+
+Build war file (that will include the above commonParams.xml file)
+- mvn install
+
+Deploy the war file into tomcat
+- URL localhost:8080/manager, login as user 'admin', password 'password'
+- find the "WAR file to deploy" box, click the "Choose File" button, navigate to your local waresMyStuff repository, target directory,
+  select the war file just built
+- click on the "deploy" button in the Tomcat Web Application Manager web page
+- URL localhost:8080/'war file name'/login where 'war file name' is the name of the just-built war file
+
