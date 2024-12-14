@@ -8,6 +8,7 @@ import com.db.DoubleStrings;
 import com.db.MyStatement;
 import com.db.SessionVars;
 import com.db.Strings;
+import com.errorLogging.ExceptionContinue;
 
 public class User extends MyObject {
 	/**
@@ -425,7 +426,7 @@ public class User extends MyObject {
 		return new MyObjects();
 	}
 
-	public User isValidUser(String name, String password) throws Exception {
+	public User isValidUser(String name, String password) throws Exception, ExceptionContinue {
 		if (name == null)
 			throw new Exception("null name.");
 		if (password == null)
@@ -439,7 +440,7 @@ public class User extends MyObject {
 		if (password.length() > PASSWORDLENGTH)
 			throw new Exception("Password is greater than " + PASSWORDLENGTH + " characters.");
 		if (!findValidUser(name, password)) {
-			throw new Exception("Username '" + name + "' and password are not in the database.");
+			throw new ExceptionContinue("Username '" + name + "' and password are not in the database.");
 		}
 		return (User) find(name);
 	}
