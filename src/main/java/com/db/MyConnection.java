@@ -14,7 +14,7 @@ public class MyConnection {
 	public static final String XMLDBUSER = "dbUser";
 	public static final String XMLDBPASSWORD = "dbPassword";
 
-	BasicDataSource basicDataSource = null;
+	static BasicDataSource basicDataSource = null;
 	SessionVars sVars = null;
 	String dbName = null;
 
