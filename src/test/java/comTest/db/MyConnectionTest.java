@@ -5,6 +5,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
 import com.db.MyConnection;
@@ -74,5 +77,28 @@ public class MyConnectionTest {
 //		}
 //		if (!newDbName.equals("cdm2"))
 //			fail("expected database name of cdm2, got " + newDbName);
+	}
+
+	/*
+	 * take the number of active connections to the pool max
+	 */
+	@Test
+	public void testActiveMax() {
+		Set<Connection> connectionSet= new HashSet<Connection>();
+		int moreConnections = MyConnection.MAXPOOLEDCONNECTIONS - sVars.connection.getActiveCount();
+		for (int i = 0; i < moreConnections; i++) {
+			try {
+				connectionSet.add(sVars.connection.getConnection());
+			} catch (Exception e) {
+				fail("couldn't get all the connections");
+			}
+		}
+		for (Connection c:connectionSet) {
+			try {
+				c.close();
+			} catch (SQLException e) {
+				fail(e.getLocalizedMessage());
+			}
+		}
 	}
 }

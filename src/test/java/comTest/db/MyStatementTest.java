@@ -3,10 +3,7 @@ package comTest.db;
 import static org.junit.Assert.*;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,7 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 //import org.xml.sax.SAXException;
 
-import com.db.MyConnection;
 import com.db.MyStatement;
 import com.db.SessionVars;
 import comTest.utilities.Utilities;

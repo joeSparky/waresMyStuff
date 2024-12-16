@@ -13,6 +13,7 @@ public class MyConnection {
 	public static final String XMLDBNAME = "dbName";
 	public static final String XMLDBUSER = "dbUser";
 	public static final String XMLDBPASSWORD = "dbPassword";
+	public static final int MAXPOOLEDCONNECTIONS = 10;
 
 	static BasicDataSource basicDataSource = null;
 	SessionVars sVars = null;
@@ -22,7 +23,8 @@ public class MyConnection {
 	protected MyConnection(SessionVars sVars, String dbName) throws Exception {
 		this.sVars = sVars;
 		this.dbName = dbName;
-		//createBasicDataSource(dbName);
+		if (basicDataSource == null)
+			createBasicDataSource(dbName);
 	}
 
 	/**
@@ -44,13 +46,18 @@ public class MyConnection {
 		url += "&password=" + sVars.xml.readXML(XMLDBPASSWORD);
 		url += "&serverTimezone=UTC";
 		basicDataSource.setUrl(url);
-		basicDataSource.setMaxTotal(5);
+		basicDataSource.setMaxTotal(MAXPOOLEDCONNECTIONS);
 	}
 
-	public Connection getConnection() throws Exception {
-		if (basicDataSource == null)
-			createBasicDataSource(dbName);
+	public Connection getConnection() throws Exception {		
+		if (MAXPOOLEDCONNECTIONS == getActiveCount()){
+			throw new Exception("pool depleted");
+		}
 		return basicDataSource.getConnection();
+	}
+	
+	public int getActiveCount() {
+		return basicDataSource.getNumActive();
 	}
 
 	// load the driver class

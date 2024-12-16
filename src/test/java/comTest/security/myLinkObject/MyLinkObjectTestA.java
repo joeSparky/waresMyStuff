@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.db.MyConnection;
 import com.db.MyStatement;
 import com.db.SessionVars;
 import com.forms.Utils;
@@ -33,10 +35,19 @@ public class MyLinkObjectTestA {
 	public void setUp() throws Exception {
 		sVars = new SessionVars(true);
 		new Utilities().allNewTables(sVars);
+		if (sVars.connection.getActiveCount()!=0) {
+			throw new Exception("starting with "+sVars.connection.getActiveCount()+" connections");
+		}
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		if (sVars.connection.getActiveCount()==MyConnection.MAXPOOLEDCONNECTIONS) {
+			throw new Exception("ending with full pool");
+		}
+		if (sVars.connection.getActiveCount()!=0) {
+			throw new Exception("leaving with non-empty pool");
+		}
 	}
 
 	/**
@@ -1215,5 +1226,89 @@ public class MyLinkObjectTestA {
 		if (foundOne)
 			fail("should not have found one");
 	}
+	@Test
+	public void DeleteMe() {
+		if (sVars.connection.getActiveCount()!=0) {
+			fail("starting with non-empty pool");
+		}
+		Connection conn = null;
+		MyStatement ms = null;
+		ResultSet rs = null;
+		ResultSet nextRs = null;
+		Parent parent = null;
+		Child child = null;
+		boolean foundOne = false;
+		try {
+			conn = sVars.connection.getConnection();
+			if (sVars.connection.getActiveCount()!=1) {
+				fail("after first connection");
+			}
+			ms = new MyStatement(conn);
+			parent = new Parent(sVars);
+			if (sVars.connection.getActiveCount()!=1) {
+				fail("Parent not closing connection");
+			}
+			child = new Child(sVars);
+			parent.add();
+			child.add();
+			parent.addChild(child);
+			if (sVars.connection.getActiveCount()!=1) {
+				fail("Parent not closing connection");
+			}
+			rs = ms.executeQuery("select * from " + new MyLinkObject(parent, child, sVars).getMyFileName());
+			rs.next();
+			if (sVars.connection.getActiveCount()!=1) {
+				fail("after next");
+			}
+			if (rs.getInt("childId") != child.id)
+				fail("expected levelTwo.id of " + child.id + ", but got " + rs.getInt("childId"));
+			if (rs.getInt("parentId") != parent.id)
+				fail("expected levelOne.id of " + parent.id + ", but got " + rs.getInt("parentId"));
+			if (!rs.isLast())
+				fail("got more than 1 record.");
+			child.deleteUnconditionally();
+			if (sVars.connection.getActiveCount()!=1) {
+				fail("after deleteUnconditionally");
+			}
+			nextRs = ms.executeQuery("select * from " + new MyLinkObject(parent, child, sVars).getMyFileName());
+			if (sVars.connection.getActiveCount()!=1) {
+				fail("after executeQuery");
+			}
+			if (nextRs.next())
+				foundOne = true;
+		} catch (SQLException e) {
+			fail(e.getLocalizedMessage());
+		} catch (Exception e) {
+			fail(e.getLocalizedMessage());
+		} finally {
+			if (rs != null)
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					fail(e.getLocalizedMessage());
+				}
+			if (nextRs != null)
+				try {
+					nextRs.close();
+				} catch (SQLException e) {
+					fail(e.getLocalizedMessage());
+				}
+			if (ms != null)
+				try {
+					ms.close();
+				} catch (SQLException e) {
+					fail(e.getLocalizedMessage());
+				}
+			if (conn != null)
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					fail(e.getLocalizedMessage());
+				}
+		}
+		if (foundOne)
+			fail("should not have found one");
+	}
+
 
 }
