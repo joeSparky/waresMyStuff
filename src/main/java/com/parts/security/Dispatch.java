@@ -21,8 +21,6 @@ import com.parts.inOut.Part;
 import com.parts.location.Location;
 import com.security.ExceptionCoding;
 import com.security.MyObjectsArray;
-import com.security.User;
-
 import com.forms.StorageFactory;
 import jakarta.servlet.annotation.WebServlet;
 
@@ -81,9 +79,10 @@ public class Dispatch extends SmartForm {
 			ret.errorToUser(myVars.dbChangeException);
 			myVars.dbChangeException = null;
 		}
-		User user = new User(sVars);
-		user.find(sVars.getUserNumber());
-		ret.rawText(user.firstName + " " + user.lastName + "<br>");
+//		User user = new User(sVars);
+//		user.find(sVars.getUserNumber());
+//		ret.rawText(user.firstName + " " + user.lastName + 
+		ret.rawText("<br>");
 		ret.rawText("Database:" + XML.readXML(MyConnection.XMLDBNAME) + "<br>");
 //			ret.rawText("Error log:" + Internals.getLogFilePathandName() + "<br>");
 //		ret.rawText(myVars.currentNode.buttonName + " menu:<br>");

@@ -9,8 +9,8 @@ dUserName,
 dPassword,
 dcsvPath, 
 dbName,
-dbRootUserName,
-dbRootPassword)>
+adminPassword,
+readOnlyPassword)>
 <!ELEMENT loginForm    (#PCDATA)>
 <!ELEMENT dispatchForm (#PCDATA)>
 <!ELEMENT dbUser    (#PCDATA)>
@@ -19,8 +19,8 @@ dbRootPassword)>
 <!ELEMENT dPassword    (#PCDATA)>
 <!ELEMENT dcsvPath     (#PCDATA)>
 <!ELEMENT dbName       (#PCDATA)>
-<!ELEMENT dbRootUserName (#PCDATA)>
-<!ELEMENT dbRootPassword (#PCDATA)>
+<!ELEMENT adminPassword (#PCDATA)>
+<!ELEMENT readOnlyPassword (#PCDATA)>
 ]>
 
 <params>
@@ -32,6 +32,6 @@ dbRootPassword)>
 	<dPassword>ferSure</dPassword>
 	<dcsvPath>c:\dumpCsv</dcsvPath>
 	<dbName>testdb</dbName>
-	<dbRootUserName>myTestDbRootName</dbRootUserName>
-	<dbRootPassword>myTestDbRootPassword</dbRootPassword>
+	<adminPassword>testAdminPassword</adminPassword>
+	<readOnlyPassword>testReadOnlyPassword</readOnlyPassword>
 </params>

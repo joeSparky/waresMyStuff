@@ -230,22 +230,6 @@ public class MyLinkObjectTest {
 	}
 
 	@Test
-	public void testDeleteTest() {
-		MyLinkObject mlo = null;
-		try {
-			mlo = new MyLinkObject(moa.get(PARENTOBJECTMUSTBEONE), moa.get(CHILDOBJECTMUSTBEONE), sVars);
-			mlo.find();
-		} catch (Exception e) {
-			fail(e.getLocalizedMessage());
-		}
-		try {
-			mlo.deleteTest();
-		} catch (Exception e) {
-			fail(e.getLocalizedMessage());
-		}
-	}
-
-	@Test
 	public void testDeleteUnconditionally() {
 		MyLinkObject mlo = null;
 		try {

@@ -60,13 +60,13 @@ public class AttachToFormPair extends SmartForm {
 				buttonUnlinkChild + "_" + leftAndRight.left.obj.id + "_" + leftAndRight.right.obj.id);
 
 		// let the user know what would happen if he chose the above option
-		try {
-			leftAndRight.left.obj.deleteTest(leftAndRight.right.obj);
-		} catch (Exception e) {
-			// let the user know
-			ret.rawText(e.getLocalizedMessage());
-			ret.newLine();
-		}
+//		try {
+//			leftAndRight.left.obj.deleteTest(leftAndRight.right.obj);
+//		} catch (Exception e) {
+//			// let the user know
+//			ret.rawText(e.getLocalizedMessage());
+//			ret.newLine();
+//		}
 		return ret;
 	}
 

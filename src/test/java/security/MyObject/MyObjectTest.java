@@ -6,10 +6,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.db.MyConnection;
 import com.db.SessionVars;
-import com.db.XML;
-
 import comTest.utilities.Utilities;
 
 public class MyObjectTest {

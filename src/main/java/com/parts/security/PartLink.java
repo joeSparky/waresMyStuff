@@ -53,7 +53,7 @@ public class PartLink extends InventoryDate {
 		super.setInventoried(inventoried);
 		this.quantity += quantity;
 		if (this.quantity == 0) {
-			deleteTest();
+//			deleteTest();
 			deleteUnconditionally();
 		} else
 			update();
@@ -64,7 +64,7 @@ public class PartLink extends InventoryDate {
 		super.setInventoried(inventoried);
 		this.quantity = quantity;
 		if (this.quantity == 0) {
-			deleteTest();
+//			deleteTest();
 			deleteUnconditionally();
 		} else
 			update();

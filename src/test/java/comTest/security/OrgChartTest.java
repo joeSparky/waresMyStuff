@@ -368,29 +368,6 @@ public class OrgChartTest {
 	}
 
 	@Test
-	public void testDeleteTest() {
-		Recurse level1 = getInstance1();
-		Recurse level2 = getInstance1();
-		// OrgChartLink mlo = null;
-		try {
-			// mlo = new OrgChartLink(level1, level2);
-			level1.addChild(level2);
-		} catch (Exception e1) {
-			fail(e1.getLocalizedMessage());
-		}
-		// try {
-		// mlo.add(1);
-		// } catch (Exception e) {
-		// fail(e.getLocalizedMessage());
-		// }
-		try {
-			level1.deleteTest(level2);
-		} catch (Exception e) {
-			fail(e.getLocalizedMessage());
-		}
-	}
-
-	@Test
 	public void testDeleteUnconditionally() {
 		Recurse level1 = getInstance1();
 		Recurse level2 = getInstance1();

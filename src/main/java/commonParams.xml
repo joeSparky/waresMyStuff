@@ -2,7 +2,7 @@
 <!DOCTYPE params [
 <!ELEMENT params (
 loginForm, dispatchForm, dbName, dbUser, dbPassword, dUserName, dPassword,
-csvPath)>
+csvPath, adminPassword, readOnlyPassword)>
 <!ELEMENT loginForm (#PCDATA)>
 <!ELEMENT dispatchForm (#PCDATA)>
 <!ELEMENT dbName (#PCDATA)>
@@ -10,9 +10,9 @@ csvPath)>
 <!ELEMENT dbPassword (#PCDATA)>
 <!ELEMENT dUserName (#PCDATA)>
 <!ELEMENT dPassword (#PCDATA)>
-
 <!ELEMENT csvPath (#PCDATA)>
-
+<!ELEMENT adminPassword (#PCDATA)>
+<!ELEMENT readOnlyPassword (#PCDATA)>
 ]>
 <params>
 	<loginForm>com.parts.security.Login</loginForm>
@@ -23,4 +23,6 @@ csvPath)>
 	<dUserName>defaultUser</dUserName>
 	<dPassword>defaultPassword</dPassword>
 	<csvPath>c:\dumpCsv</csvPath>
+	<adminPassword>adminPassword</adminPassword>
+	<readOnlyPassword>readOnlyPassword</readOnlyPassword>
 </params>

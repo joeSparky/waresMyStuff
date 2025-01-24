@@ -173,9 +173,6 @@ public abstract class MyObject implements HasTableInterface {
 	 * @throws Exception
 	 */
 	public final void deleteTestDELETE(MyObjectsArray objs) throws Exception {
-		if (this instanceof User && ((User) this).isDefaultUser())
-			throw new Exception(
-					"Can not delete the default " + User.NAME + ".<br>" + new Exception().getStackTrace()[0]);
 		MyObjects kids = listChildren(objs);
 		int childCount = kids.size();
 
@@ -224,9 +221,6 @@ public abstract class MyObject implements HasTableInterface {
 	 * @throws Exception
 	 */
 	public void deleteUnconditionally() throws Exception {
-		if (this instanceof User && ((User) this).isDefaultUser())
-			throw new Exception(
-					"Can not delete the default " + User.NAME + ".<br>" + new Exception().getStackTrace()[0]);
 		if (!this.isLoaded()) {
 			// must have already been deleted
 			clear();
@@ -254,9 +248,6 @@ public abstract class MyObject implements HasTableInterface {
 	}
 
 	public void deleteTest() throws Exception {
-		if (this instanceof User && ((User) this).isDefaultUser())
-			throw new Exception(
-					"Can not delete the default " + User.NAME + ".<br>" + new Exception().getStackTrace()[0]);
 		if (!this.isLoaded()) {
 			// must have already been deleted
 			clear();
@@ -657,7 +648,6 @@ public abstract class MyObject implements HasTableInterface {
 	public void testDeleteLinkToParent(MyObject parentType) throws Exception {
 		MyLinkObject mlo = new MyLinkObject(parentType, this, sVars);
 		mlo.find();
-		mlo.deleteTest();
 	}
 
 	/**
@@ -716,9 +706,9 @@ public abstract class MyObject implements HasTableInterface {
 		nameInstance.clear();
 	}
 
-	public void deleteTest(MyObject child) throws Exception {
-		new MyLinkObject(this, child, sVars).deleteTest();
-	}
+//	public void deleteTest(MyObject child) throws Exception {
+//		new MyLinkObject(this, child, sVars).deleteTest();
+//	}
 
 	public void linkSanity(MyObject child) throws Exception {
 		new MyLinkObject(this, child, sVars).sanity();
@@ -786,7 +776,7 @@ public abstract class MyObject implements HasTableInterface {
 		case 1:
 			MyObject parent = objs.iterator().next();
 			mlo = new MyLinkObject(parent, this, sVars);
-			mlo.deleteTest();
+//			mlo.deleteTest();
 			mlo.deleteUnconditionally();
 			break;
 		default:

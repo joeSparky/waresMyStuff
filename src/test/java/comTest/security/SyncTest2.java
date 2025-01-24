@@ -38,7 +38,7 @@ public class SyncTest2 {
 		public void run() {
 			switch (counter) {
 			case 0:
-				new Utilities().getAUser();
+//				new Utilities().getAUser();
 				System.out.println("zero");
 				break;
 			case 1:

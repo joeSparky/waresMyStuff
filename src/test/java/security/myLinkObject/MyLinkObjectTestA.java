@@ -477,24 +477,6 @@ public class MyLinkObjectTestA {
 	}
 
 	@Test
-	public void testDeleteTest() {
-		
-		Level1 level1 = null;
-		Level2Brother level2 = null;
-
-		try {
-			level1 = new Level1(sVars);
-			level1.add();
-			level2 = new Level2Brother(sVars);
-			level2.add();
-			level1.addChild(level2);
-			level1.deleteTest(level2);
-		} catch (Exception e) {
-			fail(e.getLocalizedMessage());
-		}
-	}
-
-	@Test
 	public void testDeleteUnconditionally() {
 		Level1 level1 = null;
 		Level2 level2 = null;

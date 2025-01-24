@@ -24,18 +24,22 @@ public class SessionVars {
 	public HashMap<String, String[]> parameterMap;
 	HttpServletRequest request;
 	HttpServletResponse response;
-	public int userNumber;
-//	, accessNumber, warehouseNumber;
-//	public XML xml = null;
-//	public MyConnection connection = null;
 	public static final String SESSIONATTRIBUTE = "sessionVariables";
 	public ServletContext context;
 	public HttpSession session = null;
 	public FormsMatrixDynamic fmd = null;
 	public SelectAndEditForm se = null;
 	public String buttonName = null;
+	// has administrative privileges (add and delete parts, add and delete
+	// locations)
+	public boolean admin = false;
+	// has read only privileges (put parts into inventory, remove parts from
+	// inventory)
+	public boolean readOnly = false;
 
-	public SessionVars() {}
+	public SessionVars() {
+	}
+
 //	public SessionVars(boolean noLongerUsed) {}
 	/**
 	 * the first time the server runs. Used to verify the connection to the database
@@ -82,7 +86,8 @@ public class SessionVars {
 //			String path = context.getRealPath("/WEB-INF");
 //			String path = context.getRealPath(XML.XMLFILENAME);
 //			path +=  System.getProperty("file.separator") + XML.XMLFILENAME;
-			//path = System.getProperty("user.dir") + System.getProperty("file.separator") + XML.XMLFILENAME;
+		// path = System.getProperty("user.dir") + System.getProperty("file.separator")
+		// + XML.XMLFILENAME;
 //			xml = new XML(path);
 //		}
 	}
@@ -125,28 +130,24 @@ public class SessionVars {
 //		testSessionVariables.clear();
 
 		parameterMap = new HashMap<String, String[]>();
-		userNumber = 0;
 		buttonName = null;
 	}
 
 	public boolean isLoggedIn() {
 //		return true;
-		return userNumber > 0;
+		return readOnly || admin;
 	}
 
 	/**
 	 * mark the user as logged out
 	 */
 	public void logout() {
-		userNumber = 0;
+		readOnly = false;
+		admin = false;
 	}
 
 	public void clearLogin() {
-		userNumber = 0;
-	}
-
-	public int getUserNumber() {
-		return userNumber;
+		logout();
 	}
 
 	public String stripped(String stripThis) {
@@ -250,7 +251,7 @@ public class SessionVars {
 		String tmp = XML.readXML(XML.DISPATCHPARAMNAME);
 		return dispatchThis(tmp, this);
 	}
-	
+
 	public SmartForm dispatchThis(String className, SessionVars sVars)
 			throws NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException,
 			IllegalArgumentException, InvocationTargetException, ClassNotFoundException {
@@ -315,7 +316,7 @@ public class SessionVars {
 		if (session == null)
 			return testSessionVariables.containsKey(attribute);
 		else
-			return session.getAttribute(attribute)!= null;
+			return session.getAttribute(attribute) != null;
 	}
 
 	public void putMyVars(String attribute, Object initialMyVars) throws Exception {

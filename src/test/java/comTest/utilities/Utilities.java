@@ -21,8 +21,6 @@ import com.forms.Utils;
 import com.security.MyObject;
 import com.security.MyObjectsArray;
 import com.security.Table;
-import com.security.User;
-
 import comTest.security.Level1;
 import comTest.security.Level2;
 import comTest.security.Level2Brother;
@@ -214,12 +212,12 @@ public class Utilities {
 //		} catch (AnchorNotFoundException e) {
 //			fail(e.getLocalizedMessage());
 //		}
-		if (m instanceof User)
-			try {
-				return getAUser();
-			} catch (Exception e) {
-				fail(e.getLocalizedMessage());
-			}
+//		if (m instanceof User)
+//			try {
+//				return getAUser();
+//			} catch (Exception e) {
+//				fail(e.getLocalizedMessage());
+//			}
 		fail("unknown object " + m.getCanonicalName());
 		try {
 			return m.getNew();
@@ -238,30 +236,7 @@ public class Utilities {
 //		return new Utilities().getAUser();
 //	}
 
-	public User getAUser() {
-		User user = null;
-		try {
-			user = new User(sVars);
-			user.firstName = FIRSTNAME + Utils.getNextString();
-			user.lastName = LASTNAME + Utils.getNextString();
-			user.setInstanceName(USERNAME + Utils.getNextString());
-			user.password = PASSWORD + Utils.getNextString();
-			user.add();
-		} catch (Exception e) {
-			for (StackTraceElement ste : e.getStackTrace()) {
-				System.out.println(ste.toString());
-			}
-			fail(e.getLocalizedMessage());
-		}
-//		MyObject instanceOfAnchor = null;
-//		try {
-//			instanceOfAnchor = anchor.getInstanceOfAnchor();
-//			instanceOfAnchor.addChild(user, 1);
-//		} catch (Exception e) {
-//			fail(e.getLocalizedMessage());
-//		}
-		return user;
-	}
+	
 
 	public static Level1 getLevel1() {
 		Level1 user = null;

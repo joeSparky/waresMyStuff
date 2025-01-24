@@ -113,7 +113,7 @@ public class PartLocationLocation extends SelectForm {
 			PartLink mlo = new PartLink(parties.part, parties.leftLocation, sVars);
 			mlo.find();
 			int quantity = mlo.getLinkQuantity();
-			mlo.deleteTest();
+//			mlo.deleteTest();
 			mlo.deleteUnconditionally();
 			
 			mlo = new PartLink(parties.part, parties.rightLocation, sVars);

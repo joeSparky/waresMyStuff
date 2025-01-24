@@ -1,13 +1,11 @@
 package com.parts.security;
 
 import com.db.SessionVars;
-import com.errorLogging.ExceptionContinue;
+import com.db.XML;
 import com.forms.EndOfInputException;
 import com.forms.FormsArray;
 import com.forms.SmartForm;
 import com.security.ExceptionCoding;
-import com.security.User;
-
 import jakarta.servlet.annotation.WebServlet;
 
 /**
@@ -38,7 +36,7 @@ public class Login extends SmartForm {
 	private static final long serialVersionUID = 5238017179398755052L;
 	private static final String MYNAME = Login.class.getCanonicalName();
 	private static final String PASSWORD = MYNAME + "a";
-	private static final String USER = MYNAME + "b";
+//	private static final String USER = MYNAME + "b";
 	private static final String LOGIN = MYNAME + "c";
 	/**
 	 * should match webServlet string
@@ -47,22 +45,32 @@ public class Login extends SmartForm {
 
 	public FormsArray extractParams(SessionVars sVars) throws Exception {
 		FormsArray ret = new FormsArray();
-		if (!sVars.hasParameterKey(USER)) {
-			ret.addAll(getNextForm(sVars));
-			throw new EndOfInputException(ret);
-		}
+//		if (!sVars.hasParameterKey(USER)) {
+//			ret.addAll(getNextForm(sVars));
+//			throw new EndOfInputException(ret);
+//		}
 		if (!sVars.hasParameterKey(PASSWORD)) {
 			ret.addAll(getNextForm(sVars));
 			throw new EndOfInputException(ret);
 		}
-		User user = new User(sVars);
-		try {
-			sVars.userNumber = user.isValidUser(sVars.getParameterValue(USER), sVars.getParameterValue(PASSWORD)).id;
-		} catch (ExceptionContinue e) {
-			ret.body = e.getLocalizedMessage();
-		} catch (Exception e) {
-			ret.errorToUser(e);
+		if (XML.readXML(XML.ADMINPASSWORD).equals(sVars.getParameterValue(PASSWORD))) {
+			sVars.admin = true;
+			ret.addAll(getNextForm(sVars));
+			throw new EndOfInputException(ret);
 		}
+		if (XML.readXML(XML.READONLYPASSWORD).equals(sVars.getParameterValue(PASSWORD))) {
+			sVars.readOnly = true;
+			ret.addAll(getNextForm(sVars));
+			throw new EndOfInputException(ret);
+		}
+		
+//		try {
+//			sVars.userNumber = user.isValidUser(sVars.getParameterValue(USER), sVars.getParameterValue(PASSWORD)).id;
+//		} catch (ExceptionContinue e) {
+//			ret.body = e.getLocalizedMessage();
+//		} catch (Exception e) {
+//			ret.errorToUser(e);
+//		}
 
 		ret.addAll(getNextForm(sVars));
 		throw new EndOfInputException(ret);
@@ -70,7 +78,7 @@ public class Login extends SmartForm {
 
 	FormsArray getNextForm(SessionVars sVars) throws Exception {
 		FormsArray ret = new FormsArray();
-		if (sVars.isLoggedIn())
+		if (sVars.admin || sVars.readOnly)
 			ret.addAll(new Dispatch().getForm(sVars));
 		else
 			ret.addAll(getForm(sVars));
@@ -84,11 +92,11 @@ public class Login extends SmartForm {
 		FormsArray ret = new FormsArray();
 		ret.setReturnTo(MYRETURNTO);
 		ret.startTable();
+//		ret.startRow();
+//		ret.textBox(USER, User.USERNAMELENGTH, "User Name", "", true, false);
+//		ret.endRow();
 		ret.startRow();
-		ret.textBox(USER, User.USERNAMELENGTH, "User Name", "", true, false);
-		ret.endRow();
-		ret.startRow();
-		ret.passwordBox(PASSWORD, User.PASSWORDLENGTH, "Password", "", false);
+		ret.passwordBox(PASSWORD, 20, "Password", "", false);
 		ret.endRow();
 		ret.endTable();
 		ret.submitButton("Log In", LOGIN);

@@ -4,7 +4,6 @@ import com.db.SessionVars;
 import com.parts.inOut.Part;
 import com.parts.location.Location;
 import com.parts.security.PartLink;
-import com.security.User;
 
 public class MainPartsForm extends SmartForm {
 	/**
@@ -23,10 +22,10 @@ public class MainPartsForm extends SmartForm {
 		new PartLink(new Part(sVars), new Location(sVars), sVars);
 
 		// get the user information out of the session
-		User user = new User(sVars);
+//		User user = new User(sVars);
 //		Internals.dumpStringContinue("new User(sVars)");
 
-		user.find(sVars.getUserNumber());
+//		user.find(sVars.getUserNumber());
 		Part part = new Part(sVars);
 		Location location = new Location(sVars);
 		// moving stuff between locations

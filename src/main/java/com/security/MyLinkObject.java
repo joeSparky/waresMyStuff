@@ -286,10 +286,10 @@ public class MyLinkObject implements HasTableInterface {
 	 * 
 	 * @throws Exception
 	 */
-	public void deleteTest() throws Exception {
-		if (parent instanceof User && parent.id == 1 && child.id == 1)
-			throw new Exception("The link between the default " + User.NAME + " can not be deleted.");
-	}
+//	public void deleteTest() throws Exception {
+//		if (parent instanceof User && parent.id == 1 && child.id == 1)
+//			throw new Exception("The link between the default " + User.NAME + " can not be deleted.");
+//	}
 
 	/**
 	 * delete a link unconditionally

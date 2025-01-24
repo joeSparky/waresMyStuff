@@ -20,7 +20,10 @@ public class XML {
 	public static final String DISPATCHPARAMNAME = "dispatchForm";
 	public static final String CSVPATH = "dcsvPath";
 	private static final String DEFAULTUSERNAME = "dUserName";
-	private static final String DEFAULTPASSWORD = "dPassword";
+	public static final String DEFAULTPASSWORD = "dPassword";
+	public static final String ADMINPASSWORD = "adminPassword";
+	public static final String READONLYPASSWORD = "readOnlyPassword";
+	
 	private static Hashtable<String, String> params = null;
 	static InputStream is = null;
 	// SessionVars sVars = null;

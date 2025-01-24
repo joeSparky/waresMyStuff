@@ -21,7 +21,7 @@ public class TestXML extends TestCase {
 	public void setUp() throws Exception {
 		Utilities.beforeTest();
 	}
-	
+
 	@After
 	public void tearDown() throws Exception {
 		Utilities.afterTest();
@@ -84,7 +84,7 @@ public class TestXML extends TestCase {
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
-		
+
 		// try a garbage read
 		try {
 			XML.readXML("jfasdf");
@@ -101,8 +101,28 @@ public class TestXML extends TestCase {
 		try {
 			XML.readXML(MyConnection.XMLDBUSER);
 		} catch (Exception e) {
-			fail("did not find " + MyConnection.XMLDBUSER+ " in "+Utilities.getPathToTestParamsFile());
+			fail("did not find " + MyConnection.XMLDBUSER + " in " + Utilities.getPathToTestParamsFile());
 		}
+	}
+
+	@Test
+	public void testPasswords() {
+		String tmp = null;
+		try {
+			tmp = XML.readXML(XML.ADMINPASSWORD);
+		} catch (Exception e) {
+			fail(e.getLocalizedMessage());
+		}
+		if (!tmp.equals("testAdminPassword"))
+			fail("expected testAdminPassword, got " + tmp);
+		
+		try {
+			tmp = XML.readXML(XML.READONLYPASSWORD);
+		} catch (Exception e) {
+			fail(e.getLocalizedMessage());
+		}
+		if (!tmp.equals("testReadOnlyPassword"))
+			fail("expected testReadOnlyPassword, got " + tmp);
 	}
 
 }

@@ -46,7 +46,7 @@ public class testCSVForm {
 			fail(e.getLocalizedMessage());
 		}
 //		SessionVars sVars = new SessionVars();
-		sVars.userNumber = 8483;
+//		sVars.userNumber = 8483;
 		String results = null;
 		try {
 			results = new CSVFormSelect(new SessionVars()).dumpInventory();
