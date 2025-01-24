@@ -37,7 +37,7 @@ public class TableVersion implements HasTableInterface {
 		Connection co = null;
 		MyStatement st = null;
 		try {
-			co = sVars.connection.getConnection();
+			co = MyConnection.getConnection();
 			st = new MyStatement(co);
 			st.executeMyUpdate("DROP TABLE IF EXISTS " + TABLENAME);
 			st.executeMyUpdate(query);
@@ -59,7 +59,7 @@ public class TableVersion implements HasTableInterface {
 		MyStatement st = null;
 		ResultSet rs = null;
 		try {
-			co = sVars.connection.getConnection();
+			co = MyConnection.getConnection();
 			st = new MyStatement(co);
 			rs = st.executeQuery(query);
 			if (rs.next()) {
@@ -102,7 +102,7 @@ public class TableVersion implements HasTableInterface {
 		Connection co = null;
 		MyStatement st = null;
 		try {
-			co = sVars.connection.getConnection();
+			co = MyConnection.getConnection();
 			st = new MyStatement(co);
 			st.executeMyUpdate("INSERT INTO " + TABLENAME + " (" + fields + ") VALUES (" + values + ")");
 		} finally {
@@ -118,7 +118,7 @@ public class TableVersion implements HasTableInterface {
 		Connection co = null;
 		MyStatement st = null;
 		try {
-			co = sVars.connection.getConnection();
+			co = MyConnection.getConnection();
 			st = new MyStatement(co);
 			st.executeQuery("SELECT 1 FROM " + tableName + " LIMIT 1");
 		} catch (SQLException e) {

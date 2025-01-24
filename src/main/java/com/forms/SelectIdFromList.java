@@ -27,15 +27,15 @@ public class SelectIdFromList extends SmartForm {
 
 	static final String SEARCH = SelectIdFromList.class.getCanonicalName() + "a";
 
-	class MyVars extends com.forms.MyVars {
-
-		FormsMatrixDynamic fmd = null;
-
-		protected MyVars(SessionVars sVars) throws Exception {
-			super(sVars, SelectIdFromList.class.getCanonicalName());
-		}
-
-	}
+//	class MyVars extends com.forms.MyVars {
+//
+//		FormsMatrixDynamic fmd = null;
+//
+////		protected MyVars(SessionVars sVars) throws Exception {
+////			super(sVars, SelectIdFromList.class.getCanonicalName());
+////		}
+//
+//	}
 //	class MyVars {
 //		
 //
@@ -46,7 +46,8 @@ public class SelectIdFromList extends SmartForm {
 
 	@Override
 	public FormsArray extractParams(SessionVars sVars) throws Exception {
-		MyVars myVars = (MyVars) new MyVars(sVars).get();
+		MyStorage myVars =null; 
+				myVars = new MyStorage().get(myVars, sVars, this.getClass().getCanonicalName());
 		MyObject obj = myVars.fmd.getObject();
 		if (sVars.hasParameterKey(SEARCH) && (!sVars.getParameterValue(SEARCH).equals(obj.searchString))) {
 			obj.searchString = sVars.getParameterValue(SEARCH).toLowerCase();
@@ -60,5 +61,20 @@ public class SelectIdFromList extends SmartForm {
 		FormsArray ret = new FormsArray();
 		ret.addAll(sVars.fmd.getRow().get(sVars.fmd.column).getForm(sVars));
 		return ret;
+	}
+	
+	class MyStorage extends StorageFactory {
+		int testNumber = 7;
+		FormsMatrixDynamic fmd = null;
+		@Override
+		protected MyStorage getNew() {
+			return new MyStorage();
+		}
+
+		@Override
+		public MyStorage get(Object tc, SessionVars sVars, String unique) {
+			return (MyStorage) super.get(tc, sVars, unique);
+		}
+
 	}
 }

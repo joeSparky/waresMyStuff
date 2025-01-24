@@ -6,6 +6,8 @@ import com.db.SessionVars;
 import com.security.MyObject;
 import com.security.MyObjectsArray;
 
+//import comTest.forms.StorageFactoryTest.MyStorage;
+
 public class SelectForm extends SmartForm {
 	/**
 		 * 
@@ -24,19 +26,21 @@ public class SelectForm extends SmartForm {
 	static String PEERBOX = SelectForm.class.getCanonicalName() + "f";
 	static String PARENTBUTTON = SelectForm.class.getCanonicalName() + "g";
 
-	class MyVars extends com.forms.MyVars {
+	class MyVarsHere extends StorageFactory {
 		HashMap<String, Integer> childToId = new HashMap<String, Integer>();
 		MyObject peer = null;
 		MyObject descendant = null;
 		boolean survived = true;
 
-		protected MyVars(SessionVars sVars, String uniqueName) throws Exception {
-			super(sVars, uniqueName);
-			if (get() == null) {
-				survived = false;
-				put();
-			}
+		@Override
+		public MyVarsHere get(Object tc, SessionVars sVars, String unique) {
+			return (MyVarsHere) super.get(tc, sVars, unique);
 		}
+
+@Override
+protected Object getNew() {
+	return new MyVarsHere();
+}
 	}
 
 	/**
@@ -45,7 +49,8 @@ public class SelectForm extends SmartForm {
 	@Override
 	public FormsArray getForm(SessionVars sVars, String uniqueName) throws Exception {
 		FormsArray ret = new FormsArray();
-		MyVars myVars = (MyVars) new MyVars(sVars, uniqueName).get();
+		MyVarsHere myVars = null;
+		myVars =  new MyVarsHere().get(myVars, sVars, uniqueName);
 		MyObject currentObject = sVars.fmd.getObject();
 		if (!currentObject.isLoaded())
 			return ret;
@@ -93,7 +98,8 @@ public class SelectForm extends SmartForm {
 	@Override
 	public FormsArray extractParams(SessionVars sVars, String uniqueName) throws Exception {
 		FormsArray ret = new FormsArray();
-		MyVars myVars = (MyVars) new MyVars(sVars, uniqueName).get();
+		MyVarsHere myVars = null;
+		myVars = new MyVarsHere().get(myVars, sVars, uniqueName);
 		MyObject target = sVars.fmd.getObject();
 		if (sVars.hasParameterKey(CANCELBUTTON)) {
 			sVars.fmd.getObject().clear();
@@ -219,7 +225,7 @@ public class SelectForm extends SmartForm {
 //	}
 
 	// add a button to select the parent of the currently selected object
-	public FormsArray parentButton(SessionVars sVars, MyVars myVars) {
+	public FormsArray parentButton(SessionVars sVars, MyVarsHere myVars) {
 		FormsArray ret = new FormsArray();
 		MyObject parent = null;
 		MyObject target = sVars.fmd.getObject();
@@ -233,7 +239,7 @@ public class SelectForm extends SmartForm {
 		return ret;
 	}
 
-	public FormsArray addKidsButtons(SessionVars sVars, MyVars myVars) {
+	public FormsArray addKidsButtons(SessionVars sVars, MyVarsHere myVars) {
 		FormsArray ret = new FormsArray();
 		MyObject target = sVars.fmd.getObject();
 		boolean kidsFound = false;
@@ -259,7 +265,7 @@ public class SelectForm extends SmartForm {
 		return ret;
 	}
 
-	protected FormsArray addDescendant(SessionVars sVars, MyVars myVars) throws Exception {
+	protected FormsArray addDescendant(SessionVars sVars, MyVarsHere myVars) throws Exception {
 		FormsArray ret = new FormsArray();
 		MyObject target = sVars.fmd.getObject();
 		if (target.isLoaded()) {
@@ -276,7 +282,7 @@ public class SelectForm extends SmartForm {
 		return ret;
 	}
 
-	protected FormsArray addPeer(SessionVars sVars, MyVars myVars) throws Exception {
+	protected FormsArray addPeer(SessionVars sVars, MyVarsHere myVars) throws Exception {
 		FormsArray ret = new FormsArray();
 		MyObject target = sVars.fmd.getObject();
 		if (target.isLoaded()) {
@@ -294,7 +300,7 @@ public class SelectForm extends SmartForm {
 		return ret;
 	}
 
-	protected FormsArray processPeer(SessionVars sVars, MyVars myVars) throws Exception {
+	protected FormsArray processPeer(SessionVars sVars, MyVarsHere myVars) throws Exception {
 		FormsArray ret = new FormsArray();
 		MyObject target = sVars.fmd.getObject();
 		if (myVars.peer != null) {
@@ -318,7 +324,7 @@ public class SelectForm extends SmartForm {
 	}
 
 	// allow location to override to get a warehouse for an anchor
-	protected FormsArray processDescendant(SessionVars sVars, MyVars myVars)
+	protected FormsArray processDescendant(SessionVars sVars, MyVarsHere myVars)
 			throws Exception, EndOfInputRedoQueries, EndOfInputException {
 		FormsArray ret = new FormsArray();
 		MyObject target = sVars.fmd.getObject();

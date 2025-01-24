@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import com.db.MyConnection;
 import com.db.MyStatement;
 import com.db.SessionVars;
 import com.forms.Utils;
@@ -31,12 +33,14 @@ public class MyLinkObjectTestA {
 
 	@Before
 	public void setUp() throws Exception {
-		sVars = new SessionVars(true);
+		Utilities.beforeTest();
+		sVars = new SessionVars();
 		new Utilities().allNewTables(sVars);
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		Utilities.afterTest();
 	}
 
 	
@@ -1160,7 +1164,7 @@ public class MyLinkObjectTestA {
 		Child child = null;
 		boolean foundOne = false;
 		try {
-			conn = sVars.connection.getConnection();
+			conn = MyConnection.getConnection();
 			ms = new MyStatement(conn);
 			parent = new Parent(sVars);
 			child = new Child(sVars);

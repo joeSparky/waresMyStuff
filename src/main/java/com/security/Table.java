@@ -4,9 +4,11 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.db.MyConnection;
 import com.db.MyStatement;
 import com.db.SessionVars;
 import com.db.TableVersion;
+
 
 /**
  * manage tables in database. create a table if it doesn't exist. remember what
@@ -40,7 +42,7 @@ public class Table {
 				Connection co = null;
 				MyStatement st = null;
 				try {
-					co = sVars.connection.getConnection();
+					co = MyConnection.getConnection();
 					st = new MyStatement(co);
 
 					if (!st.tableExists(lowerCase)) {
@@ -73,7 +75,7 @@ public class Table {
 				Connection co = null;
 				MyStatement st = null;
 				try {
-					co = sVars.connection.getConnection();
+					co = MyConnection.getConnection();
 					st = new MyStatement(co);
 					if (st.tableExists(lowerCase))
 						tableExistsInDb = true;

@@ -6,7 +6,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.db.MyConnection;
 import com.db.SessionVars;
+import com.db.XML;
 import com.security.MyObject;
 import com.security.MyObjectsArray;
 
@@ -20,18 +22,24 @@ import comTest.utilities.Utilities;
  *
  */
 public class MyObjectLinkTest {
-SessionVars sVars = null;
+	SessionVars sVars = null;
+
 	@Before
-	public void setUp() throws Exception {sVars = new SessionVars(true);
-		
+	public void setUp() throws Exception {
+		XML.setCommonParamsPath(Utilities.getPathToTestParamsFile());
+		sVars = new SessionVars();
 		new Utilities().allNewTables(sVars);
 		new NoParents(sVars).newTable(sVars);
 		new OneParentChild(sVars).newTable(sVars);
-		// MyLinkInternals.newLinkTable(new NoParents(sVars), new OneParentChild(sVars));
+		if (MyConnection.getActiveCount() != 0)
+			throw new Exception("starting with " + MyConnection.getActiveCount() + " connections");
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		if (MyConnection.getActiveCount() != 0)
+			throw new Exception("leaving with non-empty pool");
+
 	}
 
 	MyObject noParents = null;
@@ -40,8 +48,9 @@ SessionVars sVars = null;
 
 	public void setup() {
 		// get a parent that can not have parents
-		
-		try {noParents = new NoParents(sVars);
+
+		try {
+			noParents = new NoParents(sVars);
 			noParents.sanity();
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
@@ -52,14 +61,13 @@ SessionVars sVars = null;
 			fail(e.getLocalizedMessage());
 		}
 
-		
 		// try {
 		// oneParent.setParentId( noParents.id);
 		// } catch (Exception e1) {
 		// fail(e1.getLocalizedMessage());
 		// }
 		try {// get a child that can have only one parent
-		oneParent = new OneParentChild(sVars);
+			oneParent = new OneParentChild(sVars);
 			oneParent.sanity();
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());

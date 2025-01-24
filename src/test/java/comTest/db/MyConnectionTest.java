@@ -1,6 +1,8 @@
 package comTest.db;
 
 import static org.junit.Assert.*;
+
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -8,17 +10,27 @@ import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import com.db.MyConnection;
 import com.db.SessionVars;
+import com.db.XML;
+
+import comTest.utilities.Utilities;
 
 public class MyConnectionTest {
 	SessionVars sVars = null;
 
 	@Before
 	public void setUp() throws Exception {
-		sVars = new SessionVars(true);
+		Utilities.beforeTest();
+		sVars = new SessionVars();
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		Utilities.afterTest();
 	}
 
 	@Test
@@ -29,7 +41,7 @@ public class MyConnectionTest {
 		String query = "select database()";
 		String connDbName = "";
 		try {
-			conn = sVars.connection.getConnection();
+			conn = MyConnection.getConnection();
 			st = conn.createStatement();
 			rs = st.executeQuery(query);
 			if (rs.next())
@@ -37,13 +49,19 @@ public class MyConnectionTest {
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
-		System.out.println(connDbName);
+
+		try {
+			conn.close();
+		} catch (SQLException e) {
+			fail(e.getLocalizedMessage());
+		}
+//		System.out.println(connDbName);
 
 		// what the xml file thinks the database name is
 		// mysql converts database names to lower case
 		String xmlDbName = "";
 		try {
-			xmlDbName = sVars.xml.readXML(MyConnection.XMLDBNAME);// .toLowerCase();
+			xmlDbName = XML.readXML(MyConnection.XMLDBNAME);// .toLowerCase();
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
@@ -54,8 +72,8 @@ public class MyConnectionTest {
 //		String newDbName = "";
 //		// try to connect to the cdm2 database
 //		try {
-//			sVars.connection.createBasicDataSource("cdm2");
-//			conn = sVars.connection.getConnection();
+//			MyConnection.createBasicDataSource("cdm2");
+//			conn = MyConnection.getConnection();
 //			st = conn.createStatement();
 //			// use the same query
 //			rs = st.executeQuery(query);
@@ -84,21 +102,48 @@ public class MyConnectionTest {
 	 */
 	@Test
 	public void testActiveMax() {
-		Set<Connection> connectionSet= new HashSet<Connection>();
-		int moreConnections = MyConnection.MAXPOOLEDCONNECTIONS - sVars.connection.getActiveCount();
+		Set<Connection> connectionSet = new HashSet<Connection>();
+		int moreConnections = 0;
+		try {
+			moreConnections = MyConnection.MAXPOOLEDCONNECTIONS - MyConnection.getActiveCount();
+		} catch (IOException e) {
+			fail(e.getLocalizedMessage());
+		} catch (Exception e) {
+			fail(e.getLocalizedMessage());
+		}
 		for (int i = 0; i < moreConnections; i++) {
 			try {
-				connectionSet.add(sVars.connection.getConnection());
+				connectionSet.add(MyConnection.getConnection());
 			} catch (Exception e) {
 				fail("couldn't get all the connections");
 			}
 		}
-		for (Connection c:connectionSet) {
+		for (Connection c : connectionSet) {
 			try {
 				c.close();
 			} catch (SQLException e) {
 				fail(e.getLocalizedMessage());
 			}
+		}
+	}
+
+	/*
+	 * test the creation of a database when it doesn't exist
+	 */
+	@Test
+	public void testCreateDatabase() {
+		Connection c = null;
+		try {
+			c=MyConnection.getConnection();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try {
+			c.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 	}
 }

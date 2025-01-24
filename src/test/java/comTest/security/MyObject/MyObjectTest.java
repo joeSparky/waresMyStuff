@@ -12,13 +12,14 @@ import comTest.utilities.Utilities;
 public class MyObjectTest {
 SessionVars sVars = null;
 	@Before
-	public void setUp() throws Exception {sVars = new SessionVars(true);
-		
+	public void setUp() throws Exception {sVars = new SessionVars();
+		Utilities.beforeTest();
 		new Utilities().allNewTables(sVars);
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		Utilities.afterTest();
 	}
 
 	@Test

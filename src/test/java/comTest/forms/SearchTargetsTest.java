@@ -23,12 +23,14 @@ public class SearchTargetsTest {
 
 	@Before
 	public void setUp() throws Exception {
-		sVars = new SessionVars(true);
+		Utilities.beforeTest();
+		sVars = new SessionVars();
 		new Utilities().allNewTables(sVars);
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		Utilities.afterTest();
 	}
 
 	@Test

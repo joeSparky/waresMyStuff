@@ -3,6 +3,8 @@ package com.parts.security;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import com.db.MyConnection;
 import com.db.MyStatement;
 import com.db.SessionVars;
 import com.parts.inOut.Part;
@@ -38,7 +40,7 @@ public class DBChanges {
 		ResultSet rs = null;
 		PartLink pl = new PartLink(new Part(sVars), new Location(sVars), sVars);
 		try {
-			co = sVars.connection.getConnection();
+			co = MyConnection.getConnection();
 			st = new MyStatement(co);
 
 			// if the `inventoried` column exists
@@ -76,7 +78,7 @@ public class DBChanges {
 		ResultSet rs = null;
 		InventoryDate pl = new InventoryDate(new Location(sVars), new Location(sVars), sVars);
 		try {
-			co = sVars.connection.getConnection();
+			co = MyConnection.getConnection();
 			st = new MyStatement(co);
 
 			// if the `inventoried` column exists
@@ -113,7 +115,7 @@ public class DBChanges {
 		ResultSet rs = null;
 		Location location = new Location(sVars);
 		try {
-			co = sVars.connection.getConnection();
+			co = MyConnection.getConnection();
 			st = new MyStatement(co);
 
 			// if the `inventoried` column exists

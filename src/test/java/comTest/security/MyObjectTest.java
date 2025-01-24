@@ -24,7 +24,8 @@ public class MyObjectTest {
 
 	@Before
 	public void setUp() throws Exception {
-		sVars = new SessionVars(true);
+		Utilities.beforeTest();
+		sVars = new SessionVars();
 		blankForm = new BlankForm(sVars);
 		
 		
@@ -39,6 +40,7 @@ public class MyObjectTest {
 
 	@After
 	public void tearDown() throws Exception {
+		Utilities.afterTest();
 	}
 
 	@Test

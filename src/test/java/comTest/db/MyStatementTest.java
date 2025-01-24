@@ -7,10 +7,12 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 //import org.xml.sax.SAXException;
 
+import com.db.MyConnection;
 import com.db.MyStatement;
 import com.db.SessionVars;
 import comTest.utilities.Utilities;
@@ -22,8 +24,14 @@ public class MyStatementTest
 
 	@Before
 	public void setUp() throws Exception {
-		sVars = new SessionVars(true);
+		Utilities.beforeTest();
+		sVars = new SessionVars();
 		new Utilities().allNewTables(sVars);
+	}
+	
+	@After
+	public void tearDown() throws Exception {
+		Utilities.afterTest();
 	}
 
 	@Test
@@ -32,7 +40,7 @@ public class MyStatementTest
 		MyStatement ms = null;
 		try {
 			try {
-				conn = sVars.connection.getConnection();
+				conn = MyConnection.getConnection();
 				ms = new MyStatement(conn);
 			} catch (Exception e) {
 				fail(e.getLocalizedMessage());
@@ -80,7 +88,7 @@ public class MyStatementTest
 		Connection conn = null;
 		MyStatement st = null;
 		try {
-			conn = sVars.connection.getConnection();
+			conn = MyConnection.getConnection();
 			st = new MyStatement(conn);
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
@@ -144,7 +152,7 @@ public class MyStatementTest
 		Connection conn = null;
 		try {
 			try {
-				conn = sVars.connection.getConnection();
+				conn = MyConnection.getConnection();
 				st = new MyStatement(conn);
 			} catch (Exception e) {
 				fail(e.getLocalizedMessage());
@@ -203,7 +211,7 @@ public class MyStatementTest
 		for (int i = 0; i < connections; i++) {
 
 			try {
-				con = sVars.connection.getConnection();
+				con = MyConnection.getConnection();
 			} catch (Exception e1) {
 				fail(e1.getLocalizedMessage());
 			}
@@ -231,7 +239,7 @@ public class MyStatementTest
 		for (int i = 0; i < connections; i++) {
 
 			try {
-				con = sVars.connection.getConnection();
+				con = MyConnection.getConnection();
 			} catch (Exception e1) {
 				fail(e1.getLocalizedMessage());
 			}

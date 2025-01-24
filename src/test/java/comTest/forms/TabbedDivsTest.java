@@ -11,21 +11,25 @@ import com.forms.FormsArray;
 import com.forms.TabbedDiv;
 import com.forms.TabbedDivs;
 
+import comTest.utilities.Utilities;
+
 public class TabbedDivsTest {
 
 	@Before
 	public void setUp() throws Exception {
+		Utilities.beforeTest();
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		Utilities.afterTest();
 	}
 
 	@Test
 	public void testStartDiv() {
 		TabbedDivs tds=null;
 		try {
-			tds = new TabbedDivs(new SessionVars(true), new TabbedDivsForm(new SessionVars(true)));
+			tds = new TabbedDivs(new SessionVars(), new TabbedDivsForm(new SessionVars()));
 		} catch (Exception e1) {
 			fail(e1.getLocalizedMessage());
 		}

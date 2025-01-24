@@ -6,30 +6,58 @@ public class MyVars {
 	/**
 	 * the key into the session variables table
 	 */
-	String uniqueName = null;
-	SessionVars sVars = null;
+//	String uniqueName = null;
+//	// for testing only
+//	public int testNumber = 7;
 
-	public MyVars(SessionVars sVars, String uniqueName) throws Exception {
-		this.sVars = sVars;
-		this.uniqueName = uniqueName;
-//		sVars.putMyVars(uniqueName, this);
-//		// if myVars are not in the session space
-//		if (sVars.getMyVars(uniqueName) == null)
-//			// write a copy
-//			sVars.putMyVars(uniqueName, this);
+//	SessionVars sVars = null;
+	public MyVars() {
+
 	}
 
-	public void put() throws Exception {
-		sVars.putMyVars(uniqueName, this);
-	}
-
-	public Object get() throws Exception {
-		Object local = sVars.getMyVars(uniqueName);
-		// if there's no copy in the session
-		if (local == null) {
-			sVars.putMyVars(uniqueName, this);
-			return this;
+	private MyVars(Object obj, SessionVars sVars, String uniqueName) throws Exception {
+		if (sVars.session == null) {
+			// using testSessionVariables to store objects
+			
+			sVars.testSessionVariables.put(uniqueName, new Object());
+			if (sVars.testSessionVariables.containsKey(uniqueName)) {
+				obj = sVars.testSessionVariables.get(uniqueName);
+			} else {
+				sVars.testSessionVariables.put(uniqueName, new Object());
+			}
+		} else {
+			// using session to store MyVars
+			// if this instance is not in there
+			if (sVars.session.getAttribute(uniqueName) == null) {
+				// put it in
+				sVars.session.setAttribute(uniqueName, new Object());
+			} else {
+				obj = sVars.session.getAttribute(uniqueName);
+				obj = new Object();
+			}
 		}
-		return local;
+	}
+
+	public static void get(Object obj, SessionVars sVars, String uniqueName) throws Exception {
+		if (uniqueName == null)
+			throw new Exception("null unique name");
+		// if this is a test case
+		if (sVars.session == null) {
+			if (sVars.testSessionVariables.containsKey(uniqueName)) {
+				obj = sVars.testSessionVariables.get(uniqueName);
+			} else {
+				new MyVars(obj, sVars, uniqueName);
+			}
+		} else {
+			// using session to store MyVars
+			// if this instance is not in there
+			if (sVars.session.getAttribute(uniqueName) == null) {
+				// put it in
+				new MyVars(obj, sVars, uniqueName);
+			} else {
+				// already in memory
+				obj = sVars.session.getAttribute(uniqueName);
+			}
+		}
 	}
 }

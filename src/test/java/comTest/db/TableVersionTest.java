@@ -2,17 +2,25 @@ package comTest.db;
 
 import static org.junit.Assert.*;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
 import com.db.SessionVars;
 import com.db.TableVersion;
+import comTest.utilities.Utilities;
 
 public class TableVersionTest {
 	SessionVars sVars = null;
 
 	@Before
 	public void setUp() throws Exception {
-		sVars = new SessionVars(true);
+		Utilities.beforeTest();
+		sVars = new SessionVars();
+	}
+	@After
+	public void tearDown() throws Exception {
+		Utilities.afterTest();
 	}
 
 	@Test

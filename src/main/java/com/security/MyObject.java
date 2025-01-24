@@ -5,6 +5,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import com.db.DoubleString;
 import com.db.DoubleStrings;
+import com.db.MyConnection;
 //import com.db.MyConnection;
 import com.db.MyStatement;
 import com.db.SessionVars;
@@ -67,7 +68,7 @@ public abstract class MyObject implements HasTableInterface {
 		ResultSet rs = null;
 		this.clear();
 		try {
-			co = sVars.connection.getConnection();
+			co = MyConnection.getConnection();
 			st = new MyStatement(co);
 			rs = st.executeQuery(query);
 
@@ -93,7 +94,7 @@ public abstract class MyObject implements HasTableInterface {
 		MyStatement st = null;
 		ResultSet rs = null;
 		try {
-			co = sVars.connection.getConnection();
+			co = MyConnection.getConnection();
 			st = new MyStatement(co);
 			String query = "SELECT * FROM " + getMyFileName() + " WHERE id='" + id + "'";
 			rs = st.executeQuery(query);
@@ -240,7 +241,7 @@ public abstract class MyObject implements HasTableInterface {
 		Connection co = null;
 		MyStatement st = null;
 		try {
-			co = sVars.connection.getConnection();
+			co = MyConnection.getConnection();
 			st = new MyStatement(co);
 			st.executeMyUpdate("delete from " + getMyFileName() + " where id='" + id + "'");
 		} finally {
@@ -292,7 +293,7 @@ public abstract class MyObject implements HasTableInterface {
 		Connection co = null;
 		MyStatement st = null;
 		try {
-			co = sVars.connection.getConnection();
+			co = MyConnection.getConnection();
 			st = new MyStatement(co);
 			this.id = st
 					.executeUpdateKey("INSERT INTO " + getMyFileName() + " (" + fields + ") VALUES (" + values + ")");
@@ -361,7 +362,7 @@ public abstract class MyObject implements HasTableInterface {
 		Connection co = null;
 		MyStatement st = null;
 		try {
-			co = sVars.connection.getConnection();
+			co = MyConnection.getConnection();
 			st = new MyStatement(co);
 			if (st.executeMyUpdate(insert) != 1)
 				throw new Exception(getMyFileName() + " update failed.<br>" + new Exception().getStackTrace()[0]);
@@ -442,7 +443,7 @@ public abstract class MyObject implements HasTableInterface {
 		Connection co = null;
 		MyStatement st = null;
 		try {
-			co = sVars.connection.getConnection();
+			co = MyConnection.getConnection();
 			st = new MyStatement(co);
 			st.executeMyUpdate("DROP TABLE IF EXISTS `" + getMyFileName() + "`");
 			st.executeMyUpdate(newTab);
@@ -477,7 +478,7 @@ public abstract class MyObject implements HasTableInterface {
 		MyStatement st = null;
 		ResultSet rs = null;
 		try {
-			co = sVars.connection.getConnection();
+			co = MyConnection.getConnection();
 			st = new MyStatement(co);
 			rs = st.executeQuery("SELECT * from " + getMyFileName());
 			MyObject tmp;
@@ -513,7 +514,7 @@ public abstract class MyObject implements HasTableInterface {
 		ResultSet rs = null;
 		MyObject tmp;
 		try {
-			co = sVars.connection.getConnection();
+			co = MyConnection.getConnection();
 			st = new MyStatement(co);
 			rs = st.executeQuery("SELECT * from " + getMyFileName());
 			while (rs.next()) {

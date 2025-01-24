@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import com.db.MyConnection;
 import com.db.MyStatement;
 import com.db.SessionVars;
 import com.forms.SearchTarget.SEARCHTYPES;
@@ -103,7 +104,7 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 		MyStatement st = null;
 		ResultSet rs = null;
 		try {
-			conn = sVars.connection.getConnection();
+			conn = MyConnection.getConnection();
 			st = new MyStatement(conn);
 			rs = st.executeQuery(myQuery);
 			IdAndString tmp;
@@ -257,6 +258,7 @@ public class IdAndStrings extends ArrayList<IdAndString> {
 			ret.rawText(setTopOfList(searchType));
 			ret.endBold();
 			ret.endRow();
+			
 			ret.startRow();
 			switch (searchType) {
 			case ALL:

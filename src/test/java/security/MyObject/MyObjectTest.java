@@ -6,19 +6,25 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.db.MyConnection;
 import com.db.SessionVars;
+import com.db.XML;
+
 import comTest.utilities.Utilities;
 
 public class MyObjectTest {
-SessionVars sVars = null;
+	SessionVars sVars = null;
+
 	@Before
-	public void setUp() throws Exception {sVars = new SessionVars(true);
-		
+	public void setUp() throws Exception {
+		Utilities.beforeTest();
+		sVars = new SessionVars();
 		new Utilities().allNewTables(sVars);
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		Utilities.afterTest();
 	}
 
 	@Test

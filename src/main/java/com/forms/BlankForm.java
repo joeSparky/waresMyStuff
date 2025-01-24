@@ -12,6 +12,6 @@ public class BlankForm extends SmartForm{
 	 * 
 	 */
 	private static final long serialVersionUID = 7128071597923556162L;
-//	super(new SessionVars(true));
+//	super(new SessionVars());
 
 }

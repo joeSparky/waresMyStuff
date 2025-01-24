@@ -2,30 +2,37 @@ package comTest.db;
 
 import static org.junit.Assert.*;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import com.db.MyConnection;
-import com.db.SessionVars;
+import com.db.XML;
+
+import comTest.utilities.Utilities;
 
 public class Credentials {
 	private static final String EXPECTEDROOTNAME = "myTestDbRootName";
 	private static final String EXPECTEDROOTPASSWORD = "myTestDbRootPassword";
+	
+	@Before
+	public void setUp() throws Exception {
+		Utilities.beforeTest();
+	}
+	
+	@After
+	public void tearDown() throws Exception {
+		Utilities.afterTest();
 
+	}
 	@Test
 	public void testGetRootCredentials() {
-
-		SessionVars sVars = null;
-		try {
-			sVars = new SessionVars(true);
-		} catch (Exception e) {
-			fail(e.getLocalizedMessage());
-		}
 		String rootName = null;
 		String rootPassword = null;
 
 		try {
-			rootName = sVars.xml.readXML(MyConnection.DBROOTNAME);
-			rootPassword = sVars.xml.readXML(MyConnection.DBPASSWORD);
+			rootName = XML.readXML(MyConnection.DBROOTNAME);
+			rootPassword = XML.readXML(MyConnection.DBPASSWORD);
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
@@ -34,15 +41,4 @@ public class Credentials {
 		if (!rootPassword.equals(EXPECTEDROOTPASSWORD))
 			fail("read rootName of " + rootPassword + ". Expected " + EXPECTEDROOTPASSWORD);
 	}
-
-//	@Test
-//	public void testCreateBasicDataSource() {
-//		fail("Not yet implemented");
-//	}
-//
-//	@Test
-//	public void testGetConnection() {
-//		fail("Not yet implemented");
-//	}
-
 }

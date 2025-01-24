@@ -13,7 +13,8 @@ public class MyObjectLinkTestA {
 SessionVars sVars = null;
 	@Before
 	public void setUp() throws Exception {
-		sVars = new SessionVars(true);
+		Utilities.beforeTest();
+		sVars = new SessionVars();
 		
 		new Utilities().allNewTables(sVars);
 		new POCWithOnlyOneParent(sVars).newTable(sVars);
@@ -26,6 +27,7 @@ SessionVars sVars = null;
 
 	@After
 	public void tearDown() throws Exception {
+		Utilities.afterTest();
 	}
 
 	// update a parent / child link that uses parentId

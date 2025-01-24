@@ -2,12 +2,16 @@ package comTest.utilities;
 
 import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import com.db.MyConnection;
 import com.db.SessionVars;
+import com.db.XML;
 import com.errorLogging.Internals;
 import com.forms.FormsMatrixDynamic;
 import com.forms.SearchTarget;
@@ -49,7 +53,7 @@ public class Utilities {
 
 	static {
 		try {
-			sVars = new SessionVars(true);
+			sVars = new SessionVars();
 		} catch (Exception e) {
 			Internals.logStartupError(e);
 		}
@@ -76,7 +80,7 @@ public class Utilities {
 ////		String url = "";
 //		Connection connection = null;
 //		try {
-////			connection = sVars.connection.getConnection();
+////			connection = MyConnection.getConnection();
 ////			connection.close();
 //			connection = sVars.getConnection(databaseName);
 ////			MyConnection.closeAndOpenBasicDataSource();
@@ -128,7 +132,7 @@ public class Utilities {
 		ResultSet r = null;
 		String result = "";
 		try {
-			c = sVars.connection.getConnection();
+			c = MyConnection.getConnection();
 			s = c.createStatement();
 			r = s.executeQuery("select database()");
 			if (r.next())
@@ -160,12 +164,12 @@ public class Utilities {
 		String dbName = getDbName(sVars);
 //		SessionVars sVars = null;
 		try {
-//			sVars = new SessionVars(true);
+//			sVars = new SessionVars();
 //			dbName = sVars.xml.readXML(MyConnection.XMLDBNAME);
 //			new MyConnection(sVars);
-			outerConn = sVars.connection.getConnection();
+			outerConn = MyConnection.getConnection();
 //			new MyConnection(sVars);
-			innerConn = sVars.connection.getConnection();
+			innerConn = MyConnection.getConnection();
 			outerSt = outerConn.createStatement();
 			innerSt = innerConn.createStatement();
 //			String q = "select table_name from information_schema.tables where table_schema ='"
@@ -347,7 +351,7 @@ public class Utilities {
 		Connection conn = null;
 		Statement st = null;
 		try {
-			conn = sVars.connection.getConnection();
+			conn = MyConnection.getConnection();
 			st = conn.createStatement();
 			st.executeUpdate("DROP TABLE IF EXISTS `" + tableName + "`");
 			st.executeUpdate(newTab);
@@ -471,5 +475,18 @@ public class Utilities {
 		fdm.row = 0;
 		fdm.column = 1;
 		return fdm;
+	}
+	public static String getPathToTestParamsFile() {
+		return System.getProperty("user.dir")+File.separator+"testcommonParams.xml";
+	}
+	
+	public static void beforeTest() throws IOException, Exception {
+		XML.setCommonParamsPath(Utilities.getPathToTestParamsFile());
+		if (MyConnection.getActiveCount() != 0)
+			throw new Exception("starting with " + MyConnection.getActiveCount() + " connections");		
+	}
+	public static void afterTest() throws IOException, Exception {
+		if (MyConnection.getActiveCount() != 0)
+			throw new Exception("ending with " + MyConnection.getActiveCount() + " connections");		
 	}
 }

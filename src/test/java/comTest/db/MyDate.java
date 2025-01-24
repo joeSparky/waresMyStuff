@@ -4,6 +4,9 @@ import java.sql.ResultSet;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.junit.After;
+import org.junit.Before;
+
 //import java.sql.Date;
 
 import com.db.DoubleString;
@@ -12,6 +15,7 @@ import com.db.SessionVars;
 import com.db.Strings;
 
 import comTest.security.Level1;
+import comTest.utilities.Utilities;
 
 public class MyDate extends Level1 {
 
@@ -22,6 +26,17 @@ public class MyDate extends Level1 {
 	private static final String INVENTORYDATE = "inventoryDate";
 	boolean justInventoried = false;
 	Date inventoryDate = null;
+	
+	@Before
+	public void setUp() throws Exception {
+		Utilities.beforeTest();
+	}
+	
+	@After
+	public void tearDown() throws Exception {
+		Utilities.afterTest();
+
+	}
 
 	@Override
 	public Strings extendNewTable() {

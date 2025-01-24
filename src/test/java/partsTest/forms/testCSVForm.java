@@ -17,14 +17,16 @@ public class testCSVForm {
 
 	@Before
 	public void setUp() throws Exception {
+		Utilities.beforeTest();
 		if (sVars == null)
-			sVars = new SessionVars(true);
+			sVars = new SessionVars();
 //		
 		new Utilities().allNewTables(sVars);
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		Utilities.afterTest();
 	}
 
 //	@Test
@@ -43,11 +45,11 @@ public class testCSVForm {
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
-//		SessionVars sVars = new SessionVars(true);
+//		SessionVars sVars = new SessionVars();
 		sVars.userNumber = 8483;
 		String results = null;
 		try {
-			results = new CSVFormSelect(new SessionVars(true)).dumpInventory();
+			results = new CSVFormSelect(new SessionVars()).dumpInventory();
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}

@@ -17,7 +17,8 @@ public class PartNumberTest
 
 	@Before
 	public void setUp() throws Exception {
-		if (sVars==null)sVars = new SessionVars(true);
+		Utilities.beforeTest();
+		if (sVars==null)sVars = new SessionVars();
 //		
 		new Utilities().allNewTables(sVars);
 //		Internals.setupCallback(this);
@@ -25,6 +26,7 @@ public class PartNumberTest
 
 	@After
 	public void tearDown() throws Exception {
+		Utilities.afterTest();
 //		Internals.setupCallback(null);
 	}
 

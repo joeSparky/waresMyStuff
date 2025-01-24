@@ -2,6 +2,7 @@ package comTest.security.myLinkObject;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -33,21 +34,14 @@ public class MyLinkObjectTestA {
 
 	@Before
 	public void setUp() throws Exception {
-		sVars = new SessionVars(true);
+		Utilities.beforeTest();
+		sVars = new SessionVars();
 		new Utilities().allNewTables(sVars);
-		if (sVars.connection.getActiveCount()!=0) {
-			throw new Exception("starting with "+sVars.connection.getActiveCount()+" connections");
-		}
 	}
 
 	@After
 	public void tearDown() throws Exception {
-		if (sVars.connection.getActiveCount()==MyConnection.MAXPOOLEDCONNECTIONS) {
-			throw new Exception("ending with full pool");
-		}
-		if (sVars.connection.getActiveCount()!=0) {
-			throw new Exception("leaving with non-empty pool");
-		}
+		Utilities.afterTest();
 	}
 
 	/**
@@ -1173,7 +1167,7 @@ public class MyLinkObjectTestA {
 		Child child = null;
 		boolean foundOne = false;
 		try {
-			conn = sVars.connection.getConnection();
+			conn = MyConnection.getConnection();
 			ms = new MyStatement(conn);
 			parent = new Parent(sVars);
 			child = new Child(sVars);
@@ -1226,10 +1220,17 @@ public class MyLinkObjectTestA {
 		if (foundOne)
 			fail("should not have found one");
 	}
+
 	@Test
 	public void DeleteMe() {
-		if (sVars.connection.getActiveCount()!=0) {
-			fail("starting with non-empty pool");
+		try {
+			if (MyConnection.getActiveCount() != 0) {
+				fail("starting with non-empty pool");
+			}
+		} catch (IOException e) {
+			fail(e.getLocalizedMessage());
+		} catch (Exception e) {
+			fail(e.getLocalizedMessage());
 		}
 		Connection conn = null;
 		MyStatement ms = null;
@@ -1239,25 +1240,25 @@ public class MyLinkObjectTestA {
 		Child child = null;
 		boolean foundOne = false;
 		try {
-			conn = sVars.connection.getConnection();
-			if (sVars.connection.getActiveCount()!=1) {
+			conn = MyConnection.getConnection();
+			if (MyConnection.getActiveCount() != 1) {
 				fail("after first connection");
 			}
 			ms = new MyStatement(conn);
 			parent = new Parent(sVars);
-			if (sVars.connection.getActiveCount()!=1) {
+			if (MyConnection.getActiveCount() != 1) {
 				fail("Parent not closing connection");
 			}
 			child = new Child(sVars);
 			parent.add();
 			child.add();
 			parent.addChild(child);
-			if (sVars.connection.getActiveCount()!=1) {
+			if (MyConnection.getActiveCount() != 1) {
 				fail("Parent not closing connection");
 			}
 			rs = ms.executeQuery("select * from " + new MyLinkObject(parent, child, sVars).getMyFileName());
 			rs.next();
-			if (sVars.connection.getActiveCount()!=1) {
+			if (MyConnection.getActiveCount() != 1) {
 				fail("after next");
 			}
 			if (rs.getInt("childId") != child.id)
@@ -1267,11 +1268,11 @@ public class MyLinkObjectTestA {
 			if (!rs.isLast())
 				fail("got more than 1 record.");
 			child.deleteUnconditionally();
-			if (sVars.connection.getActiveCount()!=1) {
+			if (MyConnection.getActiveCount() != 1) {
 				fail("after deleteUnconditionally");
 			}
 			nextRs = ms.executeQuery("select * from " + new MyLinkObject(parent, child, sVars).getMyFileName());
-			if (sVars.connection.getActiveCount()!=1) {
+			if (MyConnection.getActiveCount() != 1) {
 				fail("after executeQuery");
 			}
 			if (nextRs.next())
@@ -1309,6 +1310,5 @@ public class MyLinkObjectTestA {
 		if (foundOne)
 			fail("should not have found one");
 	}
-
 
 }

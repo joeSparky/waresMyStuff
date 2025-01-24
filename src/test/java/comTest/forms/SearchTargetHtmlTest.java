@@ -2,6 +2,7 @@ package comTest.forms;
 
 import static org.junit.Assert.*;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,6 +13,8 @@ import com.forms.SearchTargetHtml;
 import com.forms.SearchTargets;
 import com.parts.inOut.Part;
 
+import comTest.utilities.Utilities;
+
 public class SearchTargetHtmlTest {
 
 	SearchTarget searchTarget = null;
@@ -21,9 +24,10 @@ public class SearchTargetHtmlTest {
 	String expect = null;
 
 	@Before
-	public void setUp() {
+	public void setUp() throws Exception {
+		Utilities.beforeTest();
 		try {
-			sVars = new SessionVars(true);
+			sVars = new SessionVars();
 			part = new Part(sVars);
 			searchTarget = new SearchTarget(part, sVars);
 			searchTarget.row = 29;
@@ -58,6 +62,10 @@ public class SearchTargetHtmlTest {
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
+	}
+	@After
+	public void tearDown() throws Exception {
+		Utilities.afterTest();
 	}
 
 	@Test

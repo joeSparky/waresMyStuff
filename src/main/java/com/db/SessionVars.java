@@ -2,6 +2,8 @@ package com.db;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +13,6 @@ import com.forms.FormsMatrixDynamic;
 import com.forms.SelectAndEditForm;
 import com.forms.SmartForm;
 import com.security.ExceptionCoding;
-
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
@@ -25,16 +26,17 @@ public class SessionVars {
 	HttpServletResponse response;
 	public int userNumber;
 //	, accessNumber, warehouseNumber;
-	public XML xml = null;
-	public MyConnection connection = null;
+//	public XML xml = null;
+//	public MyConnection connection = null;
 	public static final String SESSIONATTRIBUTE = "sessionVariables";
 	public ServletContext context;
-	HttpSession session = null;
+	public HttpSession session = null;
 	public FormsMatrixDynamic fmd = null;
 	public SelectAndEditForm se = null;
-
 	public String buttonName = null;
 
+	public SessionVars() {}
+//	public SessionVars(boolean noLongerUsed) {}
 	/**
 	 * the first time the server runs. Used to verify the connection to the database
 	 * when the program starts.
@@ -76,8 +78,13 @@ public class SessionVars {
 		this.session = session;
 		this.response.setContentType("text/html");
 //		setUpSession(request, response);
-		clear();
-
+//		if (xml == null) {
+//			String path = context.getRealPath("/WEB-INF");
+//			String path = context.getRealPath(XML.XMLFILENAME);
+//			path +=  System.getProperty("file.separator") + XML.XMLFILENAME;
+			//path = System.getProperty("user.dir") + System.getProperty("file.separator") + XML.XMLFILENAME;
+//			xml = new XML(path);
+//		}
 	}
 
 	/**
@@ -86,27 +93,36 @@ public class SessionVars {
 	 * @param testMode
 	 * @throws Exception
 	 */
-	public SessionVars(boolean testMode) throws Exception {
-		this.testMode = testMode;
-		clear();
-	}
+//	public SessionVars(boolean testMode) throws Exception {
+////		this.testMode = testMode;
+////		XML xml = null;
+//		if (testMode)
+//			xml = new XML(
+//					System.getProperty("user.dir") + System.getProperty("file.separator") + "test" + XML.XMLFILENAME);
+//		else
+//			xml = new XML(System.getProperty("user.dir") + System.getProperty("file.separator") + XML.XMLFILENAME);
+//		clear(xml);
+//	}
+//
+//	public SessionVars(XML xml) {
+//		this.xml = xml;
+//	}
 
 	/**
 	 * fake out the HTTPServlet functions
 	 */
-	boolean testMode = false;
+	// boolean testMode = false;
 
 	public void clear() throws Exception {
-		synchronized (this) {
-			if (xml == null)
-				xml = new XML(this);
-		}
-		synchronized (this) {
-			if (connection == null) {
-				connection = new MyConnection(this, xml.getDefaultDbName());
-			}
-		}
-		testSessionVariables.clear();
+//		synchronized (this) {
+//			if (xml == null)
+//				xml = new XML(this);
+//		}
+//		synchronized (this) {
+//
+//			new MyConnection(xml);
+//		}
+//		testSessionVariables.clear();
 
 		parameterMap = new HashMap<String, String[]>();
 		userNumber = 0;
@@ -114,6 +130,7 @@ public class SessionVars {
 	}
 
 	public boolean isLoggedIn() {
+//		return true;
 		return userNumber > 0;
 	}
 
@@ -224,24 +241,57 @@ public class SessionVars {
 	 */
 	public int threadCount = 0;
 
+//	public SmartForm getDispatch() throws Exception {
+//		return xml.readXML(XML.DISPATCHPARAMNAME);
+//		return xml.getDispatch(this);
+//	}
+
 	public SmartForm getDispatch() throws Exception {
-		return xml.getDispatch(this);
+		String tmp = XML.readXML(XML.DISPATCHPARAMNAME);
+		return dispatchThis(tmp, this);
+	}
+	
+	public SmartForm dispatchThis(String className, SessionVars sVars)
+			throws NoSuchMethodException, SecurityException, InstantiationException, IllegalAccessException,
+			IllegalArgumentException, InvocationTargetException, ClassNotFoundException {
+
+		Class<?> runClass = null;
+//		try {
+		runClass = this.getClass().getClassLoader().loadClass(className);
+//		} catch (ClassNotFoundException e) {
+//			Internals.dumpExceptionExit(e);
+//			// during testing, dumpExceptionExit returns
+//			return null;
+//		}
+		SmartForm ret = null;
+
+		// constructor with sVars argument
+		Constructor<?> constructor = runClass.getDeclaredConstructor(SessionVars.class);
+		ret = (SmartForm) constructor.newInstance(sVars);
+		return ret;
 	}
 
-	public String getSeparator() throws Exception {
-		return xml.getSeparator(this);
+//	public String getSeparator() throws Exception {
+//		return xml.getSeparator(this);
+//	}
+
+	public String getSeparator() {
+		if (this.context != null)
+			return "/";
+		else
+			return System.getProperty("file.separator");
 	}
 
 	public String getCSVPATH() throws Exception {
-		return xml.getCSVPath();
+		return XML.getCSVPath();
 	}
 
 	public String getDefaultUserName() throws Exception {
-		return xml.getDefaultUserName();
+		return XML.getDefaultUserName();
 	}
 
 	public String getDefaultUserPassword() throws Exception {
-		return xml.getDefaultUserPassword();
+		return XML.getDefaultUserPassword();
 	}
 
 	/**
@@ -251,17 +301,27 @@ public class SessionVars {
 	 * @return
 	 * @throws Exception
 	 */
-	public Object getMyVars(String attribute) {
-		if (testMode)
-			return testSessionVariables.get(attribute);
-		else
+	public Object getMyVars(String attribute) throws Exception {
+		if (session == null) {
+			if (testSessionVariables.containsKey(attribute))
+				return testSessionVariables.get(attribute);
+			else
+				throw new Exception("testsSessionVariables doesn't have " + attribute);
+		} else
 			return session.getAttribute(attribute);
+	}
+
+	public boolean hasMyVars(String attribute) {
+		if (session == null)
+			return testSessionVariables.containsKey(attribute);
+		else
+			return session.getAttribute(attribute)!= null;
 	}
 
 	public void putMyVars(String attribute, Object initialMyVars) throws Exception {
 		if (initialMyVars == null)
 			throw new ExceptionCoding("null initialMyVars");
-		if (testMode)
+		if (session == null)
 			testSessionVariables.put(attribute, initialMyVars);
 		else
 			session.setAttribute(attribute, initialMyVars);
@@ -270,7 +330,7 @@ public class SessionVars {
 	/**
 	 * when running in test mode (no tomcat), store the session variables here
 	 */
-	public static HashMap<String, Object> testSessionVariables = new HashMap<String, Object>();
+	public HashMap<String, Object> testSessionVariables = new HashMap<String, Object>();
 
 	/**
 	 * if sVars has already been stored in the session, return it. Otherwise, create

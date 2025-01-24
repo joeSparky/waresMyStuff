@@ -21,9 +21,15 @@ public class MyLinkInternalsTest {
 
 	@Before
 	public void setUp() throws Exception {
-		sVars = new SessionVars(true);
+		Utilities.beforeTest();
+		sVars = new SessionVars();
 		new Utilities().allNewTables(sVars);		
 		pair = addObjectPair();
+	}
+	
+	@After
+	public void tearDown() throws Exception {
+		Utilities.afterTest();
 	}
 
 	protected ArrayList<MyObject> addObjectPair() {
@@ -37,11 +43,6 @@ public class MyLinkInternalsTest {
 		}
 		// objs.add(new Level2(sVars));
 		return objs;
-	}
-
-	@After
-	public void tearDown() throws Exception {
-//		MyConnection.flush();
 	}
 
 	@Test

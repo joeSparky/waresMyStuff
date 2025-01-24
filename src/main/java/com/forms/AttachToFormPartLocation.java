@@ -21,17 +21,18 @@ public class AttachToFormPartLocation extends AttachToFormPair {
 		super(sVars);
 	}
 
-	class MyVars extends com.forms.MyVars {
+	class AttachToFormPartLocationVars extends StorageFactory {
 
 		int inOutQuantity = 1;
 		boolean survived = true;
+		@Override
+		protected Object getNew() {
+			return new AttachToFormPartLocationVars();
+		}
 
-		protected MyVars(SessionVars sVars) throws Exception {
-			super(sVars, AttachToFormPartLocation.class.getCanonicalName());
-			if (get() == null) {
-				survived = false;
-				put();
-			}
+		@Override
+		public AttachToFormPartLocationVars get(Object tc, SessionVars sVars, String unique) {
+			return (AttachToFormPartLocationVars) super.get(tc, sVars, unique);
 		}
 	}
 
@@ -73,7 +74,8 @@ public class AttachToFormPartLocation extends AttachToFormPair {
 	public FormsArray removeLink(SessionVars sVars, LeftAndRight leftAndRight) throws Exception {
 		FormsArray ret = new FormsArray();
 		// get my variables from the session
-		MyVars myVars = (MyVars) new MyVars(sVars).get();
+		AttachToFormPartLocationVars myVars = null;
+		myVars = new AttachToFormPartLocationVars().get(myVars, sVars, this.getClass().getCanonicalName());
 		if (leftAndRight.left.obj instanceof Part && leftAndRight.right.obj instanceof Location) {
 
 			ret.textBox(QUANTITY, 4, "Quantity", "" + myVars.inOutQuantity, false, false);
@@ -93,7 +95,8 @@ public class AttachToFormPartLocation extends AttachToFormPair {
 	@Override
 	public FormsArray addLink(SessionVars sVars, LeftAndRight leftAndRight) throws Exception {
 		FormsArray ret = new FormsArray();
-		MyVars myVars = (MyVars) new MyVars(sVars).get();
+		AttachToFormPartLocationVars myVars =null;
+				myVars= new AttachToFormPartLocationVars().get(myVars, sVars, this.getClass().getCanonicalName());
 		if (forMe(leftAndRight)) {
 			ret.textBox(QUANTITY, 4, "Quantity", "" + myVars.inOutQuantity, false, false);
 			ret.submitButton("Store '" + leftAndRight.left.obj.getInstanceName() + "' at '"
@@ -128,7 +131,8 @@ public class AttachToFormPartLocation extends AttachToFormPair {
 	public FormsArray extractParams(SessionVars sVars) throws Exception {
 //	super.extractParams(sVars);
 		FormsArray ret = new FormsArray();
-		MyVars myVars = (MyVars) new MyVars(sVars).get();
+		AttachToFormPartLocationVars myVars = null;
+		myVars = new AttachToFormPartLocationVars().get(myVars, sVars, this.getClass().getCanonicalName());
 		LeftAndRight leftAndRight = new LeftAndRight(sVars);
 //		if (forMe(leftAndRight)) {
 

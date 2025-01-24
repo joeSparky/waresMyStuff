@@ -31,6 +31,13 @@ public class BaseEditInstanceTest {
 
 	@Before
 	public void setUp() throws Exception {
+		Utilities.beforeTest();
+	}
+	
+	@After
+	public void tearDown() throws Exception {
+		Utilities.afterTest();
+
 	}
 
 	public void standardForm() {
@@ -39,8 +46,8 @@ public class BaseEditInstanceTest {
 
 	public void standardForm(boolean recursive) {
 		try {
-			sVars = new SessionVars(true);
-			sVars.clear();
+			sVars = new SessionVars();
+			//sVars.clear();
 			new Utilities().allNewTables(sVars);
 			callBack = new BlankForm(sVars);
 			// callBack.callBackVar = new BlankForm();
@@ -87,10 +94,6 @@ public class BaseEditInstanceTest {
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
-	}
-
-	@After
-	public void tearDown() throws Exception {
 	}
 
 //	@Test

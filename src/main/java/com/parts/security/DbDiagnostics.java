@@ -1,6 +1,7 @@
 package com.parts.security;
 
 import com.db.SessionVars;
+import com.db.XML;
 import com.forms.EndOfInputException;
 import com.forms.FormsArray;
 import com.forms.SmartForm;
@@ -64,8 +65,8 @@ public class DbDiagnostics extends SmartForm {
 		FormsArray ret = new FormsArray();
 		ret.setReturnTo(MYRETURNTO);
 
-		sVars.xml.getDefaultDbName();
-		ret.submitButton("Run diagnostics on the database " + sVars.xml.getDefaultDbName(), GO);
+		XML.getDefaultDbName();
+		ret.submitButton("Run diagnostics on the database " + XML.getDefaultDbName(), GO);
 //		ret.newLine();
 		ret.rawText("This may take several minutes.");
 		ret.newLine();

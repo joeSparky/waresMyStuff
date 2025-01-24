@@ -1,14 +1,16 @@
 package comTest.db;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.db.SessionVars;
+
 import comTest.utilities.Utilities;
 
 public class MyDateTest {
@@ -17,9 +19,15 @@ public class MyDateTest {
 
 	@Before
 	public void setUp() throws Exception {
-		sVars = new SessionVars(true);
+		Utilities.beforeTest();
+		sVars = new SessionVars();
 		new Utilities().allNewTables(sVars);
 		myDate = new MyDate(sVars);
+	}
+	
+	@After
+	public void tearDown() throws Exception {
+		Utilities.afterTest();
 	}
 
 	/**

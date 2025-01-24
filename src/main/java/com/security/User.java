@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import com.db.DoubleString;
 import com.db.DoubleStrings;
+import com.db.MyConnection;
 import com.db.MyStatement;
 import com.db.SessionVars;
 import com.db.Strings;
@@ -142,7 +143,7 @@ public class User extends MyObject {
 		String uniqueName = "SELECT count(name) FROM " + getMyFileName() + " WHERE name = '";
 		uniqueName += name + "'";
 		try {
-			co = sVars.connection.getConnection();
+			co = MyConnection.getConnection();
 			st = new MyStatement(co);
 			rs = st.executeQuery(uniqueName);
 			rs.next();
@@ -176,7 +177,7 @@ public class User extends MyObject {
 		uniqueName += name + "'";
 		ResultSet rs = null;
 		try {
-			co = sVars.connection.getConnection();
+			co = MyConnection.getConnection();
 			st = new MyStatement(co);
 			rs = st.executeQuery(uniqueName);
 			if (rs.next()) {
@@ -249,7 +250,7 @@ public class User extends MyObject {
 		String uniqueName = "SELECT * FROM " + getMyFileName() + " WHERE defaultObj = '1'";
 		ResultSet rs = null;
 		try {
-			co = sVars.connection.getConnection();
+			co = MyConnection.getConnection();
 			st = new MyStatement(co);
 			rs = st.executeQuery(uniqueName);
 			if (rs.next()) {
@@ -316,7 +317,7 @@ public class User extends MyObject {
 		MyStatement st = null;
 		// Exception myException = null;
 		try {
-			co = sVars.connection.getConnection();
+			co = MyConnection.getConnection();
 			st = new MyStatement(co);
 			st.executeMyUpdate("DELETE FROM " + getMyFileName());
 		} finally {
@@ -460,7 +461,7 @@ public class User extends MyObject {
 		queryString += userName + "' AND password='" + password + "'";
 		ResultSet rs = null;
 		try {
-			co = sVars.connection.getConnection();
+			co = MyConnection.getConnection();
 			st = new MyStatement(co);
 			rs = st.executeQuery(queryString);
 			rs.next();

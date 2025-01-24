@@ -20,14 +20,16 @@ public class InventoryTest {
 
 	@Before
 	public void setUp() throws Exception {
+		Utilities.beforeTest();
 		if (sVars == null)
-			sVars = new SessionVars(true);
+			sVars = new SessionVars();
 //		
 		new Utilities().allNewTables(sVars);
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		Utilities.afterTest();
 	}
 
 	@Test

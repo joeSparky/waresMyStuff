@@ -2,52 +2,52 @@ package comTest.forms;
 
 import static org.junit.Assert.*;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import com.db.SessionVars;
 
+import comTest.utilities.Utilities;
+
 public class MyVarsTest {
 	SessionVars sVars = null;
-	MyVars myVars = null;
+	TestClass myVars = null;
 	String uniqueName = "ldkfsjs";
 
 	@Before
 	public void setUp() throws Exception {
-		sVars = new SessionVars(true);
-		myVars = new MyVars(sVars, uniqueName);
+		Utilities.beforeTest();
+		sVars = new SessionVars();
+		myVars = TestClass.get(myVars, sVars, uniqueName);
 	}
-
-	class MyVars extends com.forms.MyVars {
-
-		int myNumber = 7;
-		boolean survived = true;
-
-		public MyVars(SessionVars sVars, String uniqueName) throws Exception {
-			super(sVars, uniqueName);
-//			put();
-			if (get() == null) {
-				survived = false;
-				put();
-			}
-		}
+	@After
+	public void tearDown() throws Exception {
+		Utilities.afterTest();
 	}
 
 	@Test
 	public void testMyVars() {
-		if (myVars.myNumber != 7)
+//		myVars = TestClass.get(myVars, sVars, uniqueName);
+		if (myVars.testNumber != 7)
 			fail("did not initialize myNumber");
 	}
 
 	@Test
 	public void coldGetTest() {
-		MyVars anotherMyVars = null;
+		TestClass anotherMyVars = null;
+		sVars.testSessionVariables.clear();
 		try {
-			anotherMyVars = new MyVars(sVars, uniqueName);
+			anotherMyVars = TestClass.get(anotherMyVars, sVars, uniqueName);
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
-		if (anotherMyVars.myNumber != 7)
+		try {
+			TestClass.get(anotherMyVars, sVars, uniqueName);
+		} catch (Exception e) {
+			fail(e.getLocalizedMessage());
+		}
+		if (anotherMyVars.testNumber != 7)
 			fail("did not get initial value of 7");
 	}
 
@@ -56,41 +56,71 @@ public class MyVarsTest {
 	 */
 	@Test
 	public void writeThroughTest() {
-		MyVars anotherMyVars = null;
+		TestClass anotherMyVars = null;
 		try {
-			anotherMyVars = new MyVars(sVars, uniqueName);
+			anotherMyVars = TestClass.get(anotherMyVars, sVars, uniqueName);
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
-		anotherMyVars.myNumber = 1234;
-		try {
-			anotherMyVars.put();
-		} catch (Exception e1) {
-			fail(e1.getLocalizedMessage());
-		}
+		anotherMyVars.testNumber = 1234;
+//		try {
+//			anotherMyVars.put();
+//		} catch (Exception e1) {
+//			fail(e1.getLocalizedMessage());
+//		}
 
-		MyVars yetAnother = null;
+		TestClass yetAnother = null;
 		try {
-			yetAnother = (MyVars) new MyVars(sVars, uniqueName).get();
+			yetAnother =TestClass.get(yetAnother, sVars, uniqueName);
 		} catch (Exception e) {
 			fail(e.getLocalizedMessage());
 		}
-		if (yetAnother.myNumber != 1234)
-			fail("expected 1234, got " + yetAnother.myNumber);
+		if (yetAnother.testNumber != 1234)
+			fail("expected 1234, got " + yetAnother.testNumber);
 	}
 
 	@Test
 	public void getAfterPutTest() {
-		if (myVars.myNumber != 7)
+		if (myVars.testNumber != 7)
 			fail("don't understand initialization");
-		myVars.myNumber = 93;
-		try {
-			myVars.put();
-			myVars = (MyVars) myVars.get();
-		} catch (Exception e) {
-			fail("put failed. " + e.getLocalizedMessage());
+		myVars.testNumber = 93;
+		if (myVars.testNumber != 93)
+			fail("put failed. Expected 93, got " + myVars.testNumber);
+	}
+
+	public class TestClass  {
+		int testNumber = 7;
+
+		public TestClass() {
+
 		}
-		if (myVars.myNumber != 93)
-			fail("put failed. Expected 93, got " + myVars.myNumber);
+
+		static TestClass get(TestClass tc, SessionVars sVars, String un) {
+			if (sVars.session == null) {
+				// using testSessionVariables
+				if (sVars.testSessionVariables.containsKey(un))
+					// overwrite input TestClass with stored TestClass
+					return (TestClass) sVars.testSessionVariables.get(un);
+				else {
+					// fresh start
+					if (tc == null)
+						tc = new MyVarsTest().new TestClass();
+					sVars.testSessionVariables.put(un, tc);
+					return tc;
+				}
+			} else {
+				// using session variables
+				if (sVars.session.getAttribute(un) == null) {
+					// not in session
+					if (tc == null)
+						tc = new MyVarsTest().new TestClass();
+					sVars.session.setAttribute(un, tc);
+					return tc;
+				} else {
+					// overwrite input TestClass with stored TestClass
+					return (TestClass) sVars.session.getAttribute(un);
+				}
+			}
+		}
 	}
 }

@@ -1,12 +1,25 @@
 package comTest.forms;
 
+import org.junit.After;
+import org.junit.Before;
+
 import com.forms.IdAndString;
 import com.forms.SearchArray;
 
+import comTest.utilities.Utilities;
 import junit.framework.TestCase;
 
 public class TestIdAndString extends TestCase {
 
+	@Before
+	public void setUp() throws Exception {
+		Utilities.beforeTest();
+	}
+
+	@After
+	public void tearDown() throws Exception {
+		Utilities.afterTest();
+	}
 	public void testSearchList() {
 		// no change if no search string for one record
 		SearchArray noSearchString = new SearchArray();

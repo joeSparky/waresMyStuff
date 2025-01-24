@@ -17,7 +17,7 @@ public class OneToMany {
 
 	@Before
 	public void setUp() throws Exception {
-		sVars = new SessionVars(true);
+		sVars = new SessionVars();
 
 		new Utilities().allNewTables(sVars);
 	}

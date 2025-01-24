@@ -9,6 +9,7 @@ import com.db.DoubleString;
 //import org.xml.sax.SAXException;
 
 import com.db.DoubleStrings;
+import com.db.MyConnection;
 import com.db.SessionVars;
 import com.db.MyStatement;
 import com.db.Strings;
@@ -68,7 +69,7 @@ public class MyLinkObject implements HasTableInterface {
 		MyStatement st = null;
 		ResultSet rs = null;
 		try {
-			conn = sVars.connection.getConnection();
+			conn = MyConnection.getConnection();
 			st = new MyStatement(conn);
 			rs = st.executeQueryWithException("select * from " + getMyFileName() + " where parentId='" + parent.id
 					+ "' and childId='" + child.id + "'");
@@ -98,7 +99,7 @@ public class MyLinkObject implements HasTableInterface {
 		MyStatement st = null;
 		ResultSet rs = null;
 		try {
-			conn = sVars.connection.getConnection();
+			conn = MyConnection.getConnection();
 			st = new MyStatement(conn);
 			rs = st.executeQueryWithException("select * from " + getMyFileName() + " where Id='" + id + "'");
 			if (rs.next()) {
@@ -188,7 +189,7 @@ public class MyLinkObject implements HasTableInterface {
 		Connection conn = null;
 		MyStatement st = null;
 		try {
-			conn = sVars.connection.getConnection();
+			conn = MyConnection.getConnection();
 			st = new MyStatement(conn);
 			st.executeMyUpdate("INSERT INTO " + getMyFileName() + " (" + fields + ") VALUES (" + values + ")");
 		} finally {
@@ -217,7 +218,7 @@ public class MyLinkObject implements HasTableInterface {
 		MyStatement st = null;
 		ResultSet rs = null;
 		try {
-			conn = sVars.connection.getConnection();
+			conn = MyConnection.getConnection();
 			st = new MyStatement(conn);
 			rs = st.executeQuery("select * from " + mlo.getMyFileName() + " where parentId='" + parent.id + "'");
 			while (rs.next()) {
@@ -253,7 +254,7 @@ public class MyLinkObject implements HasTableInterface {
 		MyStatement st = null;
 		ResultSet rs = null;
 		try {
-			conn = sVars.connection.getConnection();
+			conn = MyConnection.getConnection();
 			st = new MyStatement(conn);
 			rs = st.executeQuery("select * from " + getMyFileName() + " where childId='" + child.id + "'");
 			while (rs.next()) {
@@ -299,7 +300,7 @@ public class MyLinkObject implements HasTableInterface {
 		Connection co = null;
 		MyStatement st = null;
 		try {
-			co = sVars.connection.getConnection();
+			co = MyConnection.getConnection();
 			st = new MyStatement(co);
 			st.executeMyUpdate("delete from " + getMyFileName() + " where parentId='" + parent.id + "' AND childId='"
 					+ child.id + "'");
@@ -328,7 +329,7 @@ public class MyLinkObject implements HasTableInterface {
 		Connection co = null;
 		MyStatement st = null;
 		try {
-			co = sVars.connection.getConnection();
+			co = MyConnection.getConnection();
 			st = new MyStatement(co);
 
 			st.executeMyUpdate("delete from " + mlo.getMyFileName() + " where childId='" + child.id + "'");
@@ -356,7 +357,7 @@ public class MyLinkObject implements HasTableInterface {
 		Connection co = null;
 		MyStatement st = null;
 		try {
-			co = sVars.connection.getConnection();
+			co = MyConnection.getConnection();
 			st = new MyStatement(co);
 			st.executeMyUpdate("delete from " + mlo.getMyFileName() + " where parentId='" + parent.id + "'");
 		} finally {
@@ -427,7 +428,7 @@ public class MyLinkObject implements HasTableInterface {
 		Connection co = null;
 		MyStatement st = null;
 		try {
-			co = sVars.connection.getConnection();
+			co = MyConnection.getConnection();
 			st = new MyStatement(co);
 			st.executeMyUpdate("DROP TABLE IF EXISTS `" + tableName + "`");
 			st.executeMyUpdate(newTab);
@@ -445,7 +446,7 @@ public class MyLinkObject implements HasTableInterface {
 		MyStatement s = null;
 //		MyStatement s1 = null;
 		try {
-			co = sVars.connection.getConnection();
+			co = MyConnection.getConnection();
 			s = new MyStatement(co);
 			if (s.tableExists(fileName)) {
 				newTable(fileName);
@@ -596,7 +597,7 @@ public class MyLinkObject implements HasTableInterface {
 		MyStatement st = null;
 		ResultSet rs = null;
 		try {
-			co = sVars.connection.getConnection();
+			co = MyConnection.getConnection();
 			st = new MyStatement(co);
 			rs = st.executeQueryWithException("select * from " + getFileName(parent, child, sVars) + " where parentId='"
 					+ parent.id + "' and childId='" + child.id + "'");
@@ -624,7 +625,7 @@ public class MyLinkObject implements HasTableInterface {
 		MyStatement st = null;
 		ResultSet rs = null;
 		try {
-			co = sVars.connection.getConnection();
+			co = MyConnection.getConnection();
 			st = new MyStatement(co);
 			rs = st.executeQueryWithException("select * from " + getFileName(parent, child, sVars) + " where parentId='"
 					+ parent.id + "' and childId='" + child.id + "'");
@@ -667,7 +668,7 @@ public class MyLinkObject implements HasTableInterface {
 			Connection co = null;
 			MyStatement st = null;
 			try {
-				co = sVars.connection.getConnection();
+				co = MyConnection.getConnection();
 				st = new MyStatement(co);
 				return !(st.executeQuery("SELECT * FROM " + getFileName(child, child, sVars) + " WHERE childId='"
 						+ child.id + "' LIMIT 1;").next());
@@ -684,7 +685,7 @@ public class MyLinkObject implements HasTableInterface {
 			Connection co = null;
 			MyStatement st = null;
 			try {
-				co = sVars.connection.getConnection();
+				co = MyConnection.getConnection();
 				st = new MyStatement(co);
 				return !(st
 						.executeQuery("SELECT * FROM " + getMyFileName() + " WHERE childId='" + child.id + "' LIMIT 1;")
@@ -729,7 +730,7 @@ public class MyLinkObject implements HasTableInterface {
 		Connection co = null;
 		MyStatement st = null;
 		try {
-			co = sVars.connection.getConnection();
+			co = MyConnection.getConnection();
 			st = new MyStatement(co);
 			int count = st.executeMyUpdate(update);
 			if (count != 1)

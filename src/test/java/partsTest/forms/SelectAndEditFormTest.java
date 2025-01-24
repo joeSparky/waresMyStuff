@@ -22,14 +22,16 @@ public class SelectAndEditFormTest {
 
 	@Before
 	public void setUp() throws Exception {
+		Utilities.beforeTest();
 		if (sVars==null)
-		sVars = new SessionVars(true);
+		sVars = new SessionVars();
 //		
 		new Utilities().allNewTables(sVars);
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		Utilities.afterTest();
 	}
 
 	@Test
@@ -56,7 +58,7 @@ public class SelectAndEditFormTest {
 
 //		columns.setListInterface(new FilteredList());
 		sVars.fmd.add(columns);
-
+//sVars.putMyVars(sVars.fmd, columns);
 		// assembly, item row
 		// columns = new MyObjectsArray();
 		// columns.add(assembly);
@@ -99,9 +101,9 @@ public class SelectAndEditFormTest {
 			sf = new SelectAndEditForm(sVars, sVars.fmd);
 			sf.getForm(sVars);
 		} catch (Exception e) {
-			for (StackTraceElement ste : e.getStackTrace()) {
-				System.out.println(ste.toString());
-			}
+//			for (StackTraceElement ste : e.getStackTrace()) {
+//				System.out.println(ste.toString());
+//			}
 			fail(e.getLocalizedMessage());
 		}
 //		try {

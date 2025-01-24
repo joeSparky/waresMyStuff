@@ -10,6 +10,7 @@ import java.util.HashSet;
 import com.db.MyConnection;
 import com.db.MyStatement;
 import com.db.SessionVars;
+import com.db.XML;
 import com.errorLogging.Internals;
 import com.forms.DispatchRunStuff;
 import com.forms.EndOfInputException;
@@ -22,6 +23,7 @@ import com.security.ExceptionCoding;
 import com.security.MyObjectsArray;
 import com.security.User;
 
+import com.forms.StorageFactory;
 import jakarta.servlet.annotation.WebServlet;
 
 @WebServlet("/dispatch")
@@ -35,20 +37,20 @@ public class Dispatch extends SmartForm {
 		super(null, Dispatch.class.getCanonicalName());
 	}
 
-	class MyVars extends com.forms.MyVars {
-
-		Exception dbChangeException = null;
-		boolean survived = true;
-
-		protected MyVars(SessionVars sVars) throws Exception {
-			super(sVars, Dispatch.class.getCanonicalName());
-			if (get() == null) {
-				survived = false;
-				put();
-			}
-
-		}
-	}
+//	class MyVars extends com.forms.MyVars {
+//
+//		Exception dbChangeException = null;
+//		boolean survived = true;
+//
+////		protected MyVars(SessionVars sVars) throws Exception {
+////			super(sVars, Dispatch.class.getCanonicalName());
+////			if (get() == null) {
+////				survived = false;
+//////				put();
+////			}
+////
+////		}
+//	}
 
 	private static final String MYNAME = Dispatch.class.getCanonicalName();
 	private String PARTS = MYNAME + "a";
@@ -73,7 +75,8 @@ public class Dispatch extends SmartForm {
 	public FormsArray getForm(SessionVars sVars) throws Exception {
 //		fdfdsVars.setApToRun(GOTO, this);
 		FormsArray ret = new FormsArray();
-		MyVars myVars = (MyVars) new MyVars(sVars).get();
+		MyStorage myVars = null;
+		myVars = new MyStorage().get(myVars, sVars, this.getClass().getCanonicalName());
 		if (myVars.dbChangeException != null) {
 			ret.errorToUser(myVars.dbChangeException);
 			myVars.dbChangeException = null;
@@ -81,7 +84,7 @@ public class Dispatch extends SmartForm {
 		User user = new User(sVars);
 		user.find(sVars.getUserNumber());
 		ret.rawText(user.firstName + " " + user.lastName + "<br>");
-		ret.rawText("Database:" + sVars.xml.readXML(MyConnection.XMLDBNAME) + "<br>");
+		ret.rawText("Database:" + XML.readXML(MyConnection.XMLDBNAME) + "<br>");
 //			ret.rawText("Error log:" + Internals.getLogFilePathandName() + "<br>");
 //		ret.rawText(myVars.currentNode.buttonName + " menu:<br>");
 		ret.submitButton("Parts", PARTS);
@@ -117,7 +120,8 @@ public class Dispatch extends SmartForm {
 	@Override
 	public FormsArray extractParams(SessionVars sVars) throws Exception {
 		FormsArray ret = new FormsArray();
-		MyVars myVars = (MyVars) new MyVars(sVars).get();
+		MyStorage myVars = null;
+		myVars = new MyStorage().get(myVars, sVars, this.getClass().getCanonicalName());
 
 		// move to login
 		try {
@@ -180,7 +184,7 @@ public class Dispatch extends SmartForm {
 		MyStatement st = null;
 		ResultSet rs = null;
 		try {
-			co = sVars.connection.getConnection();
+			co = MyConnection.getConnection();
 			st = new MyStatement(co);
 			rs = st.executeQuery(query);
 			writer = new PrintWriter("list.txt", "UTF-8");
@@ -231,8 +235,7 @@ public class Dispatch extends SmartForm {
 //		mainBranch.addChildren(
 //				new DispatchRunStuff("com.parts.forms.CSVForm", Permission.USER, "print inventory"));
 		try {
-			mainBranch
-					.addChildren(new DispatchRunStuff("com.parts.security.FormLogout", "Log Off"));
+			mainBranch.addChildren(new DispatchRunStuff("com.parts.security.FormLogout", "Log Off"));
 		} catch (ExceptionCoding e) {
 			Internals.logStartupError(e);
 		}
@@ -255,5 +258,22 @@ public class Dispatch extends SmartForm {
 		ret.addAll(extractParams(sVars));
 		ret.addAll(getForm(sVars));
 		return ret;
+	}
+
+	class MyStorage extends StorageFactory {
+		int testNumber = 7;
+		Exception dbChangeException = null;
+		boolean survived = true;
+
+		@Override
+		protected MyStorage getNew() {
+			return new MyStorage();
+		}
+
+		@Override
+		public MyStorage get(Object tc, SessionVars sVars, String unique) {
+			return (MyStorage) super.get(tc, sVars, unique);
+		}
+
 	}
 }

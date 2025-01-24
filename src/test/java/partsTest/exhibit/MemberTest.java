@@ -16,13 +16,15 @@ public class MemberTest {
 SessionVars sVars = null;
 	@Before
 	public void setUp() throws Exception {
-		if (sVars==null)sVars = new SessionVars(true);
+		Utilities.beforeTest();
+		if (sVars==null)sVars = new SessionVars();
 //		
 		new Utilities().allNewTables(sVars);
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		Utilities.afterTest();
 	}
 
 	@Test

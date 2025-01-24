@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import com.db.SessionVars;
+import com.db.XML;
 import com.errorLogging.Internals;
 import com.parts.security.Login;
 
@@ -28,7 +29,7 @@ public abstract class SmartForm extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	String uniqueName = null;
-	
+
 	// From HttpServlet constructor, align subclass constructor with SmartForm
 	protected SmartForm(SessionVars sVars, String uniqueName) {
 		this.uniqueName = uniqueName;
@@ -116,6 +117,34 @@ public abstract class SmartForm extends HttpServlet {
 				return;
 			}
 		}
+		String s = null;
+		try {
+			s = XML.getCommonParamsPath();
+
+		} catch (Exception e) {
+			ret.errorToUser(e);
+		}
+
+		// set up the xml path
+
+		if (s == null) {
+			try {
+//				System.out.println("setting path to:" + context.getRealPath(XML.XMLFILENAME));
+				XML.setCommonParamsPath(context.getRealPath(XML.XMLFILENAME));				
+			} catch (Exception e) {
+				ret.errorToUser(e);
+			}
+
+		} 
+//		else
+//			try {
+//				System.out.println("existing path:" + XML.getCommonParamsPath());
+//			} catch (Exception e) {
+//				ret.errorToUser(e);
+//			}
+
+		// dump the class loader info
+//		DumpLoader.dumpLoader();
 
 //		// strip the input parameters of junk
 		sVars.extractInputParams(request);

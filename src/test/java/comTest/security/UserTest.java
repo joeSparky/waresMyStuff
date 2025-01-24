@@ -7,7 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.db.SessionVars;
-
 import com.security.MyObjectsArray;
 import com.security.User;
 
@@ -18,18 +17,14 @@ public class UserTest {
 
 	@Before
 	public void setUp() throws Exception {
-		sVars = new SessionVars(true);
-		
+		Utilities.beforeTest();
+		sVars = new SessionVars();		
 		new Utilities().allNewTables(sVars);
-		// Permissions.initLinks();
-		// Role.initLinks();
-		// RoleToPermissions.initLinks();
-		// User.initLinks();
-		// Company.initLinks();
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		Utilities.afterTest();
 	}
 
 	@Test

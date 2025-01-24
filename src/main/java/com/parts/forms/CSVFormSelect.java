@@ -62,7 +62,7 @@ SessionVars sVars = null;
 			sw.writeString("inventory.csv", dumpInventory());
 //			XML xml = new XML();
 			ret.errorToUser(
-					"Inventory written to " + sVars.xml.readXML(XML.CSVPATH) + sVars.xml.getSeparator(sVars) + "inventory.csv");
+					"Inventory written to " + XML.readXML(XML.CSVPATH) + sVars.getSeparator() + "inventory.csv");
 		}
 		return ret;
 	}

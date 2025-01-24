@@ -23,14 +23,16 @@ public class LocationTest {
 
 	@Before
 	public void setUp() throws Exception {
+		Utilities.beforeTest();
 		if (sVars == null)
-			sVars = new SessionVars(true);
+			sVars = new SessionVars();
 		utilities = new Utilities();//
 		utilities.allNewTables(sVars);
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		Utilities.afterTest();
 	}
 
 	@Test

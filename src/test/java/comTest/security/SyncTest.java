@@ -6,14 +6,18 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import comTest.utilities.Utilities;
+
 public class SyncTest {
 
 	@Before
 	public void setUp() throws Exception {
+		Utilities.beforeTest();
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		Utilities.afterTest();
 	}
 	static void printThis(int n){
 		System.out.println(n);

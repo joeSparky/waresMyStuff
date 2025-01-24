@@ -17,7 +17,8 @@ public class ReceivingTest {
 
 	@Before
 	public void setUp() throws Exception {
-		sVars = new SessionVars(true);
+		Utilities.beforeTest();
+		sVars = new SessionVars();
 
 		// System.out.println("database
 		// name:"+XML.readStandardXML(MyConnection.XMLDBNAME));
@@ -26,6 +27,7 @@ public class ReceivingTest {
 
 	@After
 	public void tearDown() throws Exception {
+		Utilities.afterTest();
 	}
 
 //	@Test

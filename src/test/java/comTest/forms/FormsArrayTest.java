@@ -10,16 +10,20 @@ import com.db.SessionVars;
 import com.forms.FormsArray;
 import com.security.ExceptionCoding;
 
+import comTest.utilities.Utilities;
+
 public class FormsArrayTest {
 SessionVars sVars = null;
 	@Before
 	public void setUp() throws Exception {
+		Utilities.beforeTest();
 		if (sVars==null)
-			sVars = new SessionVars(true);
+			sVars = new SessionVars();
 	}
 
 	@After
 	public void tearDown() throws Exception {
+		Utilities.afterTest();
 	}
 
 	@Test
