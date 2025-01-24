@@ -1,6 +1,7 @@
 package com.parts.security;
 
 import com.db.SessionVars;
+import com.errorLogging.ExceptionContinue;
 import com.forms.EndOfInputException;
 import com.forms.FormsArray;
 import com.forms.SmartForm;
@@ -25,10 +26,10 @@ public class Login extends SmartForm {
 	public Login() {
 		super(null, Login.class.getCanonicalName());
 	}
-	
+
 	@Override
 	public void init() {
-		
+
 	}
 
 	/**
@@ -57,9 +58,12 @@ public class Login extends SmartForm {
 		User user = new User(sVars);
 		try {
 			sVars.userNumber = user.isValidUser(sVars.getParameterValue(USER), sVars.getParameterValue(PASSWORD)).id;
+		} catch (ExceptionContinue e) {
+			ret.body = e.getLocalizedMessage();
 		} catch (Exception e) {
 			ret.errorToUser(e);
 		}
+
 		ret.addAll(getNextForm(sVars));
 		throw new EndOfInputException(ret);
 	}

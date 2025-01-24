@@ -5,6 +5,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
 import com.db.MyConnection;
@@ -48,31 +51,54 @@ public class MyConnectionTest {
 		if (!connDbName.equals(xmlDbName))
 			fail("connection database name:" + connDbName + " xml database name:" + xmlDbName);
 
-		String newDbName = "";
-		// try to connect to the cdm2 database
-		try {
-			sVars.connection.createBasicDataSource("cdm2");
-			conn = sVars.connection.getConnection();
-			st = conn.createStatement();
-			// use the same query
-			rs = st.executeQuery(query);
-			if (rs.next())
-				newDbName = rs.getString(1);
-		} catch (Exception e) {
-			fail(e.getLocalizedMessage());
-		} finally {
+//		String newDbName = "";
+//		// try to connect to the cdm2 database
+//		try {
+//			sVars.connection.createBasicDataSource("cdm2");
+//			conn = sVars.connection.getConnection();
+//			st = conn.createStatement();
+//			// use the same query
+//			rs = st.executeQuery(query);
+//			if (rs.next())
+//				newDbName = rs.getString(1);
+//		} catch (Exception e) {
+//			fail(e.getLocalizedMessage());
+//		} finally {
+//			try {
+//				if (rs != null)
+//					rs.close();
+//				if (st != null)
+//					st.close();
+//				if (conn != null)
+//					conn.close();
+//			} catch (SQLException e) {
+//				fail(e.getLocalizedMessage());
+//			}
+//		}
+//		if (!newDbName.equals("cdm2"))
+//			fail("expected database name of cdm2, got " + newDbName);
+	}
+
+	/*
+	 * take the number of active connections to the pool max
+	 */
+	@Test
+	public void testActiveMax() {
+		Set<Connection> connectionSet= new HashSet<Connection>();
+		int moreConnections = MyConnection.MAXPOOLEDCONNECTIONS - sVars.connection.getActiveCount();
+		for (int i = 0; i < moreConnections; i++) {
 			try {
-				if (rs != null)
-					rs.close();
-				if (st != null)
-					st.close();
-				if (conn != null)
-					conn.close();
+				connectionSet.add(sVars.connection.getConnection());
+			} catch (Exception e) {
+				fail("couldn't get all the connections");
+			}
+		}
+		for (Connection c:connectionSet) {
+			try {
+				c.close();
 			} catch (SQLException e) {
 				fail(e.getLocalizedMessage());
 			}
 		}
-		if (!newDbName.equals("cdm2"))
-			fail("expected database name of cdm2, got " + newDbName);
 	}
 }

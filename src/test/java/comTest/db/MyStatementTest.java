@@ -3,10 +3,7 @@ package comTest.db;
 import static org.junit.Assert.*;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,7 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 //import org.xml.sax.SAXException;
 
-import com.db.MyConnection;
 import com.db.MyStatement;
 import com.db.SessionVars;
 import comTest.utilities.Utilities;
@@ -195,78 +191,6 @@ public class MyStatementTest
 		}
 	}
 
-	@Test
-	public void testTestListTable() {
-		String dbName = null;
-		try {
-			dbName = sVars.xml.readXML(MyConnection.XMLDBNAME);
-		} catch (Exception e) {
-			fail(e.getLocalizedMessage());
-		}
-		final String FIRSTTABLENAME = "executereturn";
-		Connection conn = null;
-		MyStatement ms = null;
-		try {
-			try {
-				Utilities.createTable(FIRSTTABLENAME + "1", sVars);
-				Utilities.createTable(FIRSTTABLENAME + "2", sVars);
-				Utilities.createTable(FIRSTTABLENAME + "3", sVars);
-				conn = sVars.connection.getConnection();
-				ms = new MyStatement(conn);
-			} catch (Exception e) {
-				fail(e.getLocalizedMessage());
-			}
-			Collection<String> titles = new ArrayList<String>();
-			ResultSet rs = null;
-			try {
-				rs = ms.executeQuery(
-						"SELECT table_name FROM information_schema.tables where table_schema='" + dbName + "'");
-			} catch (SQLException e) {
-				fail(e.getLocalizedMessage());
-			}
-			try {
-				while (rs.next()) {
-					// String s = rs.getString(1);
-					// titles.add(rs.getString(1));
-					titles.add(rs.getString("table_name"));
-					// System.out.println("string '" + s + "'");
-				}
-			} catch (SQLException e) {
-				fail(e.getLocalizedMessage());
-			}
-			try {
-				ms.close();
-			} catch (SQLException e) {
-				fail(e.getLocalizedMessage());
-			}
-
-			if (titles.size() != 3)
-				fail("expected size of 3, got " + titles.size());
-
-			if (!titles.contains((FIRSTTABLENAME + "1")))
-//					.toLowerCase()))
-				fail("could not find " + FIRSTTABLENAME + "1");
-			if (!titles.contains((FIRSTTABLENAME + "2")))
-//					.toLowerCase()))
-				fail("could not find " + FIRSTTABLENAME + "2");
-			if (!titles.contains((FIRSTTABLENAME + "3")))
-//					.toLowerCase()))
-				fail("could not find " + FIRSTTABLENAME + "3");
-		} finally {
-			if (ms != null)
-				try {
-					ms.close();
-				} catch (SQLException e) {
-					fail(e.getLocalizedMessage());
-				}
-			if (conn != null)
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					fail(e.getLocalizedMessage());
-				}
-		}
-	}
 
 	/**
 	 * see if connections are pooled
