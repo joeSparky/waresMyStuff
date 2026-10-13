@@ -624,16 +624,17 @@ public class SearchTarget {
 		String query = "";
 		query += "SELECT " + thisLevelFileName + "." + "id, ";
 		query += thisLevelFileName + ".name";
-		query += insertSearchMatch(obj);
 		query += " from ";
 		query += thisLevelFileName + " ";
 //		query += "WHERE (";
 //		query += thisLevelFileName + ".anchorId='" + allAnchor.id + "\')";
 
-		query += insertScoreThreshold(obj);
-		query += insertOrderByAndLimit(obj,
-//				IdAndStrings.DISPLAYSIZE,
-				SEARCHTYPES.ALL);
+				if (obj.searchString != null && !obj.searchString.isBlank()) {
+			String escaped = obj.searchString.trim().toLowerCase(java.util.Locale.ROOT)
+					.replace("!", "!!").replace("%", "!%").replace("_", "!_").replace("'", "''");
+			query += " WHERE LOWER(" + thisLevelFileName + ".name) LIKE '%" + escaped + "%' ESCAPE '!' ";
+		}
+		query += " ORDER BY name";
 		return query;
 	}
 
